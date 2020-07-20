@@ -1,0 +1,31 @@
+{% extends 'base' %}
+{% block content %}
+
+
+{% for item in boxes %}
+
+    BOX CODE {{ item.box.code}} <br>
+
+
+    {% for box_item in item.box.get_items %}
+
+    {{ box_item.code }} <br>
+    {{ box_item.medicine.chemical}} <br>
+    {{ box_item.medicine.generic}} <br>
+    {{ box_item.medicine.brand}} <br>
+    {{ box_item.medicine.profile}} <br>
+    <hr>
+
+{% endfor %}
+
+
+
+{% endfor %}
+
+
+
+
+
+
+
+{% endblock content %}

@@ -49,6 +49,13 @@ INSTALLED_APPS = [
     'django_extensions'
 ]
 
+
+JET_SIDE_MENU_COMPACT = True
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+JET_DEFAULT_THEME = 'light-gray'
+
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

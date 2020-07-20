@@ -1,0 +1,46 @@
+{% extends 'base' %}
+
+
+
+{% block content %}
+{% if item.is_box %}
+    <h1> THIS BOX CONTAINS {{item.box.get_items|length}} PACKETS </h1>
+
+    {% if item.owner %}
+        {{ item.owner.username }}
+    {% endif %}
+
+    {% if item.box.importer %}
+        {{ item.box.importer.name}} <br>
+        {{ item.box.importer.address}} <br>
+        {{ item.box.importer.phone}} <br>
+        {{ item.box.importer.email}} <br>
+
+
+    {% endif %}
+
+
+    <br>
+    <hr>
+    {% for box_item in item.box.get_items %}
+
+        {{ box_item.code }} <br>
+        {{ box_item.medicine.chemical}} <br>
+        {{ box_item.medicine.generic}} <br>
+        {{ box_item.medicine.brand}} <br>
+        {{ box_item.medicine.profile}} <br>
+        <hr>
+
+    {% endfor %}
+
+
+{% else %}
+    {{ item.code }} <br>
+    {{ item.medicine.chemical}} <br>
+    {{ item.medicine.generic}} <br>
+    {{ item.medicine.brand}} <br>
+    {{ item.medicine.profile}} <br>
+
+{% endif %}
+
+{% endblock content %}

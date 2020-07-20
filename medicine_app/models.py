@@ -17,8 +17,16 @@ class Admin_A(models.Model):  #THERE WILL BE ONly ONE ADMIN_A CREATED BY SUPERAD
             
         super(Admin_A, self).save(*args, **kwargs)
 
-class Admin_B(models.Model): #Distrubitors
+    class META:
+        verbose_name = "super admin"
+        verbose_name_plural = "super admin"
+
+class Admin_B(models.Model): #Distrubitors IMPORTERS
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.TextField(max_length=60, default=None, null=True)
+    address = models.TextField(max_length=350, default=None, null=True)
+    phone = models.TextField(max_length=60, default=None, null=True)
+    email = models.TextField(max_length=60, default=None, null=True)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -26,9 +34,24 @@ class Admin_B(models.Model): #Distrubitors
             group.user_set.add(self.user)
         super(Admin_B, self).save(*args, **kwargs)
 
+    class META:
+        verbose_name = "importers"
+        verbose_name_plural = "importers"
+
 
 class Admin_C(models.Model):  # Pharmacy
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.TextField(max_length=60, default=None, null=True)
+    address = models.TextField(max_length=350, default=None, null=True)
+    phone = models.TextField(max_length=60, default=None, null=True)
+    email = models.TextField(max_length=60, default=None, null=True)
+
+    class META:
+        verbose_name = "pharmacies"
+        verbose_name_plural = "pharmacies"
+
+
+
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -53,27 +76,65 @@ class Stocks(models.Model):
 class Brands(models.Model):
     name = models.TextField(max_length=200, default=None)
 
+    def __str__(self):
+        return self.name
+
     def all_medicines(self):
         return Medicines.objects.filter(brand=self)
 
+
+class Categories(models.Model):
+    name = models.TextField(max_length=60)
+
+
+class SubCategories(models.Model):
+    name = models.TextField(max_length=60)
+    category = models.ForeignKey("Categories", on_delete=models.CASCADE)
+
 class Medicines(models.Model):
-    chemical = models.TextField(max_length=200, default=None)
-    generic = models.TextField(max_length=200, default=None)
-    amount = models.TextField(max_length=200, default=None) # miligram or cLitre 
+    chemical = models.CharField(max_length=200, default=None)
+    generic = models.CharField(max_length=200, default=None)  # item name
+    #amount = models.CharField(max_length=200, default=None) # miligram or cLitre 
     brand = models.ForeignKey("Brands", on_delete=models.CASCADE)
+    # drugs or surgical
+    profile = models.CharField(max_length=50, default="drugs")
+
+    itemTypeChoices = (("TABLETS", "TABLETS"), ("GEL", "GEL"), ("INJECTION", "INJECTION"), ("CAPSULES", "CAPSULES"), ("SYRUP", "SYRUP"), ("SUSPENSION", "SUSPENSION"))
+    item_type = models.TextField(
+        max_length=50, choices=itemTypeChoices, default=None, null=True)
+
+    measureChoices = (("TABLETS", "TABLETS"), ("PIECE", "PIECE"), ("TUBE", "TUBE"), ("VIALS", "VIALS"), ("AMPOULES", "AMPOULES"), ("BOTTLE", "BOTTLE"))
+    measure = models.TextField(
+        max_length=50, choices=measureChoices, default=None, null=True)
+
+    formulationChoices = (("TABLETS", "TABLETS"), ("CREAM", "CREAM"), ("INJECTION", "INJECTION"), ("SUSPENSION", "SUSPENSION"), ("SYRUP", "SYRUP"), ("ORAL SOLUTION", "ORAL SOLUTION"))
+    formulation = models.TextField(
+        max_length=50, choices=formulationChoices, default=None, null=True)
+
+    routeChoices = (("PO", "PO"), ("IV", "IV"), ("PR", "PR"), ("IM", "IM"), ("TOPICAL", "TOPICAL"))
+    route = models.TextField(max_length=50, choices=routeChoices, default=None, null=True)
+    
+    pbb_code = models.CharField(max_length=50, default=None, null=True)
+
+    category = models.ForeignKey("SubCategories", on_delete=models.CASCADE, default=None, null=True, blank=True)
 
     def __str__(self):
         return self.generic
 
 
-class Boxes(models.Model):
+class Boxes(models.Model): #BOXES
     medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE)
+    importer = models.ForeignKey("admin_b", default=None, on_delete=models.CASCADE, null=True)
     code = models.TextField(max_length=100)
     quantity = models.IntegerField()
+    
     # items = models.ManyToManyField("Items", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.medicine.generic 
+
+    def get_items(self):
+        return Items.objects.filter(box=self)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -82,14 +143,21 @@ class Boxes(models.Model):
             first_creation = False
         super().save(*args, **kwargs)
         if first_creation:
+            item = Items.objects.create(box=self, medicine=self.medicine, code=int(self.code), is_box=True)
             for i in range(1, self.quantity+1):
                 item = Items.objects.create(box=self, medicine=self.medicine, code=int(self.code)+i)
                 item.save()
+    
 
-class Items(models.Model):
+class Items(models.Model): #PACKETS # this will be the main code this will hold the GENERATED CODES
     medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE)
     code = models.TextField(max_length=100)
     box = models.ForeignKey("Boxes", on_delete=models.CASCADE, default=None)
+    is_active = models.BooleanField(default=False)
+    is_box = models.BooleanField(default=False) #defines 
+    owner = models.ForeignKey(User, default=None, on_delete=models.CASCADE, null=True)
+
     def __str__(self):
         return "%s - %s" % (self.medicine.generic, self.code)
 #TODO: autogenreate random key
+#TODO: eger codelar uretıldıyse ve daha stoklara eklenmedıyse is_active false kalicak_ kodlar qrdcodedan taratilip stoga alindiginda is_active alani true olarak degistirilecek
