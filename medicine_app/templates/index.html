@@ -1,46 +1,69 @@
-{% extends 'base' %}
+{% extends 'base.html' %}
 
 
 
 {% block content %}
-{% if item.is_box %}
-    <h1> THIS BOX CONTAINS {{item.box.get_items|length}} PACKETS </h1>
 
-    {% if item.owner %}
-        {{ item.owner.username }}
-    {% endif %}
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
 
-    {% if item.box.importer %}
-        {{ item.box.importer.name}} <br>
-        {{ item.box.importer.address}} <br>
-        {{ item.box.importer.phone}} <br>
-        {{ item.box.importer.email}} <br>
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Tables</h1>
+            <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p>
+  
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th>Drug Name</th>
+                        <th>Quantity</th>
+                        <th>Importer Name</th>
+                        <th>Importer Address</th>
+                        <th>Importer Phone</th>
+                        <th>Importer Email</th>
+                        <th>Generate/Download Codes</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                    </tfoot>
+                    <tbody>
+                    {% for item in items %}
+                      <tr>
+                        <td><a href="/query/{{item.code}}">{{item.medicine.generic}}</a></td>
+                        <td>{{item.box.get_items.count}}</td>
+                        <td>{{ item.box.importer.name}}</td>
+                        <td>{{ item.box.importer.address}}</td>
+                        <td>{{ item.box.importer.phone}}</td>
+                        <td>{{ item.box.importer.email}} </td>
+                        <td><a href="/print_codes/{{item.code}}" class="btn btn-success btn-icon-split">
+                            <span class="icon text-white-50">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span class="text">Download</span>
+                          </a>
 
+                        </td>
 
-    {% endif %}
+                      </tr>
+                    {% endfor %}
 
-
-    <br>
-    <hr>
-    {% for box_item in item.box.get_items %}
-
-        {{ box_item.code }} <br>
-        {{ box_item.medicine.chemical}} <br>
-        {{ box_item.medicine.generic}} <br>
-        {{ box_item.medicine.brand}} <br>
-        {{ box_item.medicine.profile}} <br>
-        <hr>
-
-    {% endfor %}
-
-
-{% else %}
-    {{ item.code }} <br>
-    {{ item.medicine.chemical}} <br>
-    {{ item.medicine.generic}} <br>
-    {{ item.medicine.brand}} <br>
-    {{ item.medicine.profile}} <br>
-
-{% endif %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+  
+          </div>
+          <!-- /.container-fluid -->
+  
+        </div>
+        <!-- End of Main Content -->
+  
 
 {% endblock content %}

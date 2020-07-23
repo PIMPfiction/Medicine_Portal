@@ -24,6 +24,7 @@ SECRET_KEY = '@gbfq)cl3&ediq=1vn4&34(ocy4v1*72j_o10ok2h7f=@fxhg7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DOMAIN = "http://18.216.201.143"
 
 ALLOWED_HOSTS = ['*']
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,8 +47,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'medicine_app',
-    'django_extensions'
+    'django_extensions',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'drf_generators',   
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # <-- And here
+    ],
+}
 
 
 JET_SIDE_MENU_COMPACT = True
@@ -137,10 +148,10 @@ USE_TZ = True
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 if DEBUG:
     STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-    #STATICFILES_DIRS = [
-    #    os.path.join(BASE_DIR, 'static')
-   #]
+    #STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static')
+   ]
 
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')

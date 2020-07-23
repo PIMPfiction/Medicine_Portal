@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+{% if item.is_box %}
+    <h1> THIS BOX CONTAINS {{item.box.get_items|length}} PACKETS </h1>
+{% endif %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Index of Box</h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th>Drug Name</th>
+                        <th>Code</th>
+                        <th>Importer Name</th>
+
+                      </tr>
+                    </thead>
+                    <tfoot>
+                    </tfoot>
+                    <tbody>
+                    {% for packet in item.box.get_items %}
+                      <tr>
+                        <td>{{item.medicine.generic}}</td>
+                        <td>{{ packet.code}}</td>
+                        <td>{{ packet.box.importer.name}}</td>
+                      </tr>
+                    {% endfor %}
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+  
+          </div>
+          <!-- /.container-fluid -->
+  
+        </div>
+        <!-- End of Main Content -->
+  
+
+
+
+
+
+
+
+
+
+{% endblock content %}

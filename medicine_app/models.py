@@ -73,6 +73,8 @@ class Stocks(models.Model):
             if owner:
                 break
         return self.medicine.generic + " "  + str(self.quantity) + " " + str(owner.user.username) + " "
+
+        
 class Brands(models.Model):
     name = models.TextField(max_length=200, default=None)
 
@@ -151,7 +153,7 @@ class Boxes(models.Model): #BOXES
 
 class Items(models.Model): #PACKETS # this will be the main code this will hold the GENERATED CODES
     medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE)
-    code = models.TextField(max_length=100)
+    code = models.TextField(max_length=100, primary_key=True)
     box = models.ForeignKey("Boxes", on_delete=models.CASCADE, default=None)
     is_active = models.BooleanField(default=False)
     is_box = models.BooleanField(default=False) #defines 
@@ -161,3 +163,10 @@ class Items(models.Model): #PACKETS # this will be the main code this will hold 
         return "%s - %s" % (self.medicine.generic, self.code)
 #TODO: autogenreate random key
 #TODO: eger codelar uretıldıyse ve daha stoklara eklenmedıyse is_active false kalicak_ kodlar qrdcodedan taratilip stoga alindiginda is_active alani true olarak degistirilecek
+
+
+class Files(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    printed_by = models.ForeignKey(User, default=None, on_delete=models.CASCADE, null=True)
+    exported_file = models.FileField(default=None, blank=True)
