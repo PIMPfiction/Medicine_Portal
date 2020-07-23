@@ -13,7 +13,8 @@ def index(request):
     return render(request, "index.html", {
         "items":items,
         "medicine_count":Medicines.objects.all().count(),
-        "code_count":Items.objects.all().count()
+        "code_count":Items.objects.all().count(),
+        "importers_count":Admin_B.objects.all().count()
         }
     )
 

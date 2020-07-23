@@ -3,17 +3,18 @@
 
 
 {% block content %}
-{% if item.is_box %}
-    <h1> THIS BOX CONTAINS {{item.box.get_items|length}} PACKETS </h1>
-{% endif %}
+
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
+            {% if item.is_box %}
+                <h1> THIS CARTOON CONTAINS {{item.box.get_items|length}} PACKETS </h1>
+            {% endif %}
 
             <!-- DataTales Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Index of Box</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Index of Cartoon</h6>
               </div>
               <div class="card-body">
                 <div class="table-responsive">

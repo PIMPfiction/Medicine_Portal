@@ -15,10 +15,16 @@ for row in range(2, 193):
         value = sheet.cell_value(row, column)
         if column == 0:
             value = int(value)
+        if column == 1:
+            try:
+                importer = Admin_B.objects.get(name=value)
+            except:   
+                importer = Admin_B.objects.create(name=value)
+                importer.save()
         array.append(value)
     medicine = Medicines.objects.create(
         item_no = array[0],
-        importer = array[1],
+        importer = importer,
         chemical = array[2],
         generic = array[3],
         profile = array[4],

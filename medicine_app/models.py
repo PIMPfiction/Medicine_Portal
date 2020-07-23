@@ -22,17 +22,17 @@ class Admin_A(models.Model):  #THERE WILL BE ONly ONE ADMIN_A CREATED BY SUPERAD
         verbose_name_plural = "super admin"
 
 class Admin_B(models.Model): #Distrubitors IMPORTERS
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    #user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.TextField(max_length=60, default=None, null=True)
-    address = models.TextField(max_length=350, default=None, null=True)
-    phone = models.TextField(max_length=60, default=None, null=True)
-    email = models.TextField(max_length=60, default=None, null=True)
+    address = models.TextField(max_length=350, default="P.O. Box 99376 - 80100, Mombasa. P.O. Box 2138 - 20100, Nakuru.", null=True)
+    phone = models.TextField(max_length=60, default="+ 254 (20) 694 8000", null=True)
+    email = models.TextField(max_length=60, default="info@kebs.org", null=True)
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            group = Group.objects.get(name="admin_b")
-            group.user_set.add(self.user)
-        super(Admin_B, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.id:
+    #         group = Group.objects.get(name="admin_b")
+    #         group.user_set.add(self.user)
+    #     super(Admin_B, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -97,7 +97,7 @@ class SubCategories(models.Model):
 
 class Medicines(models.Model):
     item_no = models.IntegerField(null=True)
-    importer = models.TextField(default=None)
+    importer = models.ForeignKey("admin_b", default=None, on_delete=models.CASCADE, null=True)
     chemical = models.CharField(max_length=200, default=None)
     generic = models.CharField(max_length=200, default=None)  # item name
     #amount = models.CharField(max_length=200, default=None) # miligram or cLitre 
