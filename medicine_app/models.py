@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 # Create your models here.
-
+from random import randint
 
 class SuperAdmin(models.Model): 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -34,6 +34,8 @@ class Admin_B(models.Model): #Distrubitors IMPORTERS
             group.user_set.add(self.user)
         super(Admin_B, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return self.name
     class META:
         verbose_name = "importers"
         verbose_name_plural = "importers"
@@ -94,10 +96,12 @@ class SubCategories(models.Model):
     category = models.ForeignKey("Categories", on_delete=models.CASCADE)
 
 class Medicines(models.Model):
+    item_no = models.IntegerField(null=True)
+    importer = models.TextField(default=None)
     chemical = models.CharField(max_length=200, default=None)
     generic = models.CharField(max_length=200, default=None)  # item name
     #amount = models.CharField(max_length=200, default=None) # miligram or cLitre 
-    brand = models.ForeignKey("Brands", on_delete=models.CASCADE)
+    #brand = models.ForeignKey("Brands", on_delete=models.CASCADE)
     # drugs or surgical
     profile = models.CharField(max_length=50, default="drugs")
 
@@ -118,16 +122,22 @@ class Medicines(models.Model):
     
     pbb_code = models.CharField(max_length=50, default=None, null=True)
 
-    category = models.ForeignKey("SubCategories", on_delete=models.CASCADE, default=None, null=True, blank=True)
+    #category = models.ForeignKey("SubCategories", on_delete=models.CASCADE, default=None, null=True, blank=True)
 
     def __str__(self):
         return self.generic
 
 
+def code_generation():
+    # 100018266872|0281133943854617
+    first = randint(111111111111, 999999999999)
+    second = randint(1111111111111111, 9999999999999999)
+    return str(first)+"|"+str(second)
+
 class Boxes(models.Model): #BOXES
     medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE)
     importer = models.ForeignKey("admin_b", default=None, on_delete=models.CASCADE, null=True)
-    code = models.TextField(max_length=100)
+    code = models.TextField(max_length=100, blank=True, default=code_generation)
     quantity = models.IntegerField()
     
     # items = models.ManyToManyField("Items", on_delete=models.CASCADE)
@@ -145,9 +155,11 @@ class Boxes(models.Model): #BOXES
             first_creation = False
         super().save(*args, **kwargs)
         if first_creation:
-            item = Items.objects.create(box=self, medicine=self.medicine, code=int(self.code), is_box=True)
+            item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
             for i in range(1, self.quantity+1):
-                item = Items.objects.create(box=self, medicine=self.medicine, code=int(self.code)+i)
+                first, second = self.code.split("|")
+                item_code = str(int(first)+i)+"|"+second
+                item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
                 item.save()
     
 

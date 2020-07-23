@@ -40,7 +40,7 @@ def download_file(request, id):
 
 
 def code_info(request, code):
-    item = Items.objects.get(code=int(code))
+    item = Items.objects.get(code=code)
     return render(request, "code_info.html", {"item":item})
 
 
