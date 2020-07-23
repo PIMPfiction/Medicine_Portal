@@ -10,7 +10,12 @@ from django.conf import settings
 def index(request):
     user = User.objects.all()[0]
     items = Items.objects.filter(is_box=True)
-    return render(request, "index.html", {"items":items})
+    return render(request, "index.html", {
+        "items":items,
+        "medicine_count":Medicines.objects.all().count(),
+        "code_count":Items.objects.all().count()
+        }
+    )
 
 def print_codes(request, code):
     user = User.objects.all()[0]
