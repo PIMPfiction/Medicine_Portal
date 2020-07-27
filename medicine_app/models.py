@@ -132,7 +132,7 @@ def code_generation():
     # 100018266872|0281133943854617
     first = randint(111111111111, 999999999999)
     second = randint(1111111111111111, 9999999999999999)
-    return str(first)+"|"+str(second)
+    return str(first)+"-"+str(second)
 
 class Boxes(models.Model): #BOXES
     medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE)
@@ -157,8 +157,8 @@ class Boxes(models.Model): #BOXES
         if first_creation:
             item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
             for i in range(1, self.quantity+1):
-                first, second = self.code.split("|")
-                item_code = str(int(first)+i)+"|"+second
+                first, second = self.code.split("-")
+                item_code = str(int(first)+i)+"-"+second
                 item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
                 item.save()
     

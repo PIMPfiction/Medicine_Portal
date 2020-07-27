@@ -24,7 +24,7 @@ def print_codes(request, code):
     random_integer = str(randint(111111,9999999))
     f = open("static/media/{}.txt".format(random_integer), "w")
     for x in item.box.get_items():
-        f.write(settings.DOMAIN+"/api/items/"+str(x.code)+",")
+        f.write("kebs:"+str(x.code)+",")
     f.close()
     file_instance = Files.objects.create(printed_by=user)
     f = open("static/media/{}.txt".format(random_integer), "r") #always open in read mode r
