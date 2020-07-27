@@ -7,56 +7,67 @@ from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
 
 class SuperAdminViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = SuperAdmin.objects.order_by('pk')
     serializer_class = SuperAdminSerializer
 
 
 class Admin_AViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Admin_A.objects.order_by('pk')
     serializer_class = Admin_ASerializer
 
 
 class Admin_BViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Admin_B.objects.order_by('pk')
     serializer_class = Admin_BSerializer
 
 
 class Admin_CViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Admin_C.objects.order_by('pk')
     serializer_class = Admin_CSerializer
 
 
 class StocksViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Stocks.objects.order_by('pk')
     serializer_class = StocksSerializer
 
 
 class BrandsViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Brands.objects.order_by('pk')
     serializer_class = BrandsSerializer
 
 
 class CategoriesViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Categories.objects.order_by('pk')
     serializer_class = CategoriesSerializer
 
 
 class SubCategoriesViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = SubCategories.objects.order_by('pk')
     serializer_class = SubCategoriesSerializer
 
 
 class MedicinesViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Medicines.objects.order_by('pk')
     serializer_class = MedicinesSerializer
 
 
 class BoxesViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Boxes.objects.order_by('pk')
     serializer_class = BoxesSerializer
 
 
 class ItemsViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Items.objects.order_by('pk')
     serializer_class = ItemsSerializer
     # filterset_fields = ("medicine", "code", "box", "is_box")
