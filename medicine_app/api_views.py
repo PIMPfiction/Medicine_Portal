@@ -67,7 +67,7 @@ class BoxesViewSet(ModelViewSet):
 
 
 class ItemsViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    #permission_classes = (IsAuthenticated,)
     queryset = Items.objects.order_by('pk')
     serializer_class = ItemsSerializer
     # filterset_fields = ("medicine", "code", "box", "is_box")

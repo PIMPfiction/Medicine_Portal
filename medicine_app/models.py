@@ -148,19 +148,19 @@ class Boxes(models.Model): #BOXES
     def get_items(self):
         return Items.objects.filter(box=self)
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            first_creation = True
-        else:
-            first_creation = False
-        super().save(*args, **kwargs)
-        if first_creation:
-            item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
-            for i in range(1, self.quantity+1):
-                first, second = self.code.split("-")
-                item_code = str(int(first)+i)+"-"+second
-                item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
-                item.save()
+    # def save(self, *args, **kwargs):
+    #     if not self.id:
+    #         first_creation = True
+    #     else:
+    #         first_creation = False
+    #     super().save(*args, **kwargs)
+    #     if first_creation:
+    #         item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
+    #         for i in range(1, self.quantity+1):
+    #             first, second = self.code.split("-")
+    #             item_code = str(int(first)+i)+"-"+second
+    #             item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
+    #             item.save()
     
 
 class Items(models.Model): #PACKETS # this will be the main code this will hold the GENERATED CODES

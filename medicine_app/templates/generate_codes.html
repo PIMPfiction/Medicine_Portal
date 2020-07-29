@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                  <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registered Drugs</div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{medicine_count}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Generated Code Count</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{code_count}}</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registered Importers</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{importers_count}}</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+            </div>
+
+            <form method="POST" >
+              <!-- DataTales Example -->
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <label class="input-group-text" for="inputGroupSelect01">Select Medicine</label>
+                </div>
+                <select name="medicine" class="custom-select" id="inputGroupSelect01">
+                  <option selected>Choose...</option>
+                  {% for medicine in medicines %}
+                  <option value="{{ medicine.id }}">{{medicine.generic}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <label class="input-group-text" for="inputGroupSelect02">Select Importer</label>
+                </div>
+                <select name="importer" class="custom-select" id="inputGroupSelect02">
+                  <option selected>Choose...</option>
+                  {% for importer in importers %}
+                  <option value="{{ importer.id }}">{{importer.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <label class="input-group-text" for="inputGroupSelect01">Select Target</label>
+                </div>
+                <select name="target" class="custom-select" id="inputGroupSelect01">
+                  <option selected>Choose...</option>
+                  {% for target in targets %}
+                  <option value="{{ target.id }}">{{target.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Box Count</span>
+                </div>
+                <input name="box" type="text" class="form-control" placeholder="Number Of Boxes" aria-label="Username" aria-describedby="basic-addon1">
+              </div>
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Packet Count in Boxes</span>
+                </div>
+                <input name="packet" type="text" class="form-control" placeholder="Packet Count" aria-label="Username" aria-describedby="basic-addon1">
+              </div>
+            </div>
+            <!-- /.container-fluid -->
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            
+          </form>
+  
+        </div>
+        <!-- End of Main Content -->
+  
+
+{% endblock content %}

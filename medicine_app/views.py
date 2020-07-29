@@ -6,6 +6,12 @@ from django.core.files import File
 from random import *
 # Create your views here.
 from django.conf import settings
+def code_generation():
+    # 100018266872|0281133943854617
+    first = randint(111111111111, 999999999999)
+    second = randint(1111111111111111, 9999999999999999)
+    return str(first)+"-"+str(second)
+
 
 def index(request):
     user = User.objects.all()[0]
@@ -17,6 +23,44 @@ def index(request):
         "importers_count":Admin_B.objects.all().count()
         }
     )
+
+def generate_codes(request):
+    if request.method == "GET":
+        user = User.objects.all()[0]
+        medicines = Medicines.objects.all()
+        importers = Admin_B.objects.all()
+        targets = Admin_C.objects.all()
+        return render(request, "generate_codes.html", {
+            "medicines":medicines,
+            "importers":importers,
+            "targets":targets,
+
+        })
+    elif request.method == "POST":
+        medicine_id = request.POST.get("medicine")
+        importer_id = request.POST.get("importer")
+        owner_id = request.POST.get("owner")
+        box_count = request.POST.get("box")
+        packet_count = request.POST.get("packet")
+        medicine = Medicines.objects.get(id=medicine_id)
+        importer = Admin_B.objects.get(id=importer_id)
+        for i in range(1, int(box_count)+1):
+            box = Boxes.objects.create(medicine=medicine, importer=importer, quantity=int(packet_count))
+            item = Items.objects.create(box=box, medicine=box.medicine, code=box.code, is_box=True)
+            for i in range(1, box.quantity+1):
+                first, second = box.code.split("-")
+                item_code = str(int(first)+i)+"-"+second
+                item = Items.objects.create(box=box, medicine=box.medicine, code=item_code)
+                item.save()
+        # item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
+        # for i in range(1, self.quantity+1):
+        #     first, second = self.code.split("-")
+        #     item_code = str(int(first)+i)+"-"+second
+        #     item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
+        #     item.save()
+        return HttpResponse("xd")
+
+
 
 def print_codes(request, code):
     user = User.objects.all()[0]
