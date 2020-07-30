@@ -6,6 +6,7 @@ from django.core.files import File
 from random import *
 # Create your views here.
 from django.conf import settings
+from django.db import connection
 def code_generation():
     # 100018266872|0281133943854617
     first = randint(111111111111, 999999999999)
@@ -34,6 +35,9 @@ def generate_codes(request):
             "medicines":medicines,
             "importers":importers,
             "targets":targets,
+            "medicine_count":Medicines.objects.all().count(),
+            "code_count":Items.objects.all().count(),
+            "importers_count":Admin_B.objects.all().count()
 
         })
     elif request.method == "POST":
@@ -44,6 +48,7 @@ def generate_codes(request):
         packet_count = request.POST.get("packet")
         medicine = Medicines.objects.get(id=medicine_id)
         importer = Admin_B.objects.get(id=importer_id)
+        # loop_count = 0
         for i in range(1, int(box_count)+1):
             box = Boxes.objects.create(medicine=medicine, importer=importer, quantity=int(packet_count))
             item = Items.objects.create(box=box, medicine=box.medicine, code=box.code, is_box=True)
@@ -52,6 +57,8 @@ def generate_codes(request):
                 item_code = str(int(first)+i)+"-"+second
                 item = Items.objects.create(box=box, medicine=box.medicine, code=item_code)
                 item.save()
+                # loop_count +=1
+                # print("{} loop   {} created".format(loop_count,item_code))
         # item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
         # for i in range(1, self.quantity+1):
         #     first, second = self.code.split("-")
