@@ -122,8 +122,8 @@ WSGI_APPLICATION = 'Medicine_Portal.wsgi.application'
 #     }
 # }
 
-import os
-if os.environ["COMPUTERNAME"] == "DESKTOP-X3CY1ON":
+import platform
+if platform.uname()[1] == "DESKTOP-X3CY1ON":
     DATABASES = {
 
         'default': {

@@ -80,7 +80,6 @@ class ItemsViewSet(ModelViewSet):
         if box_index:
             return queryset.filter(box__code=box_index)
         elif receive:
-            print(self.request.user)
             current_code = self.kwargs["pk"]
             item = Items.objects.get(code=current_code)
             if item.is_box:
