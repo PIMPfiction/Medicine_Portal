@@ -1,10 +1,11 @@
 from rest_framework.viewsets import ModelViewSet
-from medicine_app.serializers import SuperAdminSerializer, Admin_ASerializer, Admin_BSerializer, Admin_CSerializer, StocksSerializer, BrandsSerializer, CategoriesSerializer, SubCategoriesSerializer, MedicinesSerializer, BoxesSerializer, ItemsSerializer
-from medicine_app.models import SuperAdmin, Admin_A, Admin_B, Admin_C, Stocks, Brands, Categories, SubCategories, Medicines, Boxes, Items
+from medicine_app.serializers import *
+from medicine_app.models import *
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import *
 
 class SuperAdminViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated,)
@@ -67,17 +68,27 @@ class BoxesViewSet(ModelViewSet):
 
 
 class ItemsViewSet(ModelViewSet):
-    #permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     queryset = Items.objects.order_by('pk')
     serializer_class = ItemsSerializer
     # filterset_fields = ("medicine", "code", "box", "is_box")
     # filter_backends = [DjangoFilterBackend]
     def get_queryset(self):
         queryset = super(ItemsViewSet, self).get_queryset()
-
         box_index = self.request.query_params.get('box_code', '')
+        receive = self.request.query_params.get('receive', '')
         if box_index:
             return queryset.filter(box__code=box_index)
+        elif receive:
+            print(self.request.user)
+            current_code = self.kwargs["pk"]
+            item = Items.objects.get(code=current_code)
+            if item.is_box:
+                box = item.box
+                if box.target.user == self.request.user:
+                    box.received = True
+                    box.save()
+            return queryset
         else:
             return queryset
         # order_by = self.request.query_params.get('order_by', '')

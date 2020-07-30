@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_generators',   
 ]
+#pip install psycopg2-binary
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
@@ -121,27 +122,47 @@ WSGI_APPLICATION = 'Medicine_Portal.wsgi.application'
 #     }
 # }
 
+import os
+if os.environ["COMPUTERNAME"] == "DESKTOP-X3CY1ON":
+    DATABASES = {
 
+        'default': {
 
-DATABASES = {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-    'default': {
+            'NAME': 'dev',
 
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'USER': 'postgres',
 
-        'NAME': 'dev',
+            'PASSWORD': 'root1234',
 
-        'USER': 'postgres',
+            'HOST': '18.216.201.143',
 
-        'PASSWORD': 'root1234',
+            'PORT': '5432',
 
-        'HOST': 'localhost',
-
-        'PORT': '5432',
+        }
 
     }
+else:
+    DATABASES = {
 
-}
+        'default': {
+
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+
+            'NAME': 'dev',
+
+            'USER': 'postgres',
+
+            'PASSWORD': 'root1234',
+
+            'HOST': 'localhost',
+
+            'PORT': '5432',
+
+        }
+
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

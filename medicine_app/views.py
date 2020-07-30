@@ -43,14 +43,21 @@ def generate_codes(request):
     elif request.method == "POST":
         medicine_id = request.POST.get("medicine")
         importer_id = request.POST.get("importer")
-        owner_id = request.POST.get("owner")
+        #owner_id = request.POST.get("owner")
+        target_id = request.POST.get("target")
         box_count = request.POST.get("box")
         packet_count = request.POST.get("packet")
         medicine = Medicines.objects.get(id=medicine_id)
         importer = Admin_B.objects.get(id=importer_id)
+        target = Admin_C.objects.get(id=target_id)
         # loop_count = 0
         for i in range(1, int(box_count)+1):
-            box = Boxes.objects.create(medicine=medicine, importer=importer, quantity=int(packet_count))
+            box = Boxes.objects.create(
+                medicine=medicine,
+                importer=importer,
+                quantity=int(packet_count),
+                target=target,
+                )
             item = Items.objects.create(box=box, medicine=box.medicine, code=box.code, is_box=True)
             for i in range(1, box.quantity+1):
                 first, second = box.code.split("-")
@@ -65,7 +72,7 @@ def generate_codes(request):
         #     item_code = str(int(first)+i)+"-"+second
         #     item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
         #     item.save()
-        return HttpResponse("xd")
+        return HttpResponseRedirect("/")
 
 
 

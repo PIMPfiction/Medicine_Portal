@@ -53,13 +53,11 @@ class Admin_C(models.Model):  # Pharmacy
         verbose_name_plural = "pharmacies"
 
 
-
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            group = Group.objects.get(name="admin_c")
-            group.user_set.add(self.user)
-        super(Admin_C, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.id:
+    #         group = Group.objects.get(name="admin_c")
+    #         group.user_set.add(self.user)
+    #     super(Admin_C, self).save(*args, **kwargs)
 
 
 
@@ -139,7 +137,9 @@ class Boxes(models.Model): #BOXES
     importer = models.ForeignKey("admin_b", default=None, on_delete=models.CASCADE, null=True)
     code = models.TextField(max_length=100, blank=True, default=code_generation)
     quantity = models.IntegerField()
-    
+    received = models.BooleanField(default=False)
+    target = models.ForeignKey("Admin_C", default=None, on_delete=models.CASCADE, null=True)
+
     # items = models.ManyToManyField("Items", on_delete=models.CASCADE)
 
     def __str__(self):
