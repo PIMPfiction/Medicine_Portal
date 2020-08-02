@@ -1,0 +1,20 @@
+server {
+    listen 80;
+    server_name 0.0.0.0; #domain adini koyabiliriz
+    root /home/ubuntu/medicine_portal; # Projenin kök dizini
+
+    location /static/ {
+      alias /home/ubuntu/medicine_portal/static/;
+    }
+
+    location /media/ {
+    }
+    location /admin/ {
+      alias /home/ubuntu/medicine_portal/static/admin/;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/medicine_portal/Medicine_Portal.sock;  # Projenin kök dizinindeki 'proje_adı.sock' dosyası
+    }
+}

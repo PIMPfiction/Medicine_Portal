@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '@gbfq)cl3&ediq=1vn4&34(ocy4v1*72j_o10ok2h7f=@fxhg7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 DOMAIN = "http://18.216.201.143"
 
 ALLOWED_HOSTS = ['*']

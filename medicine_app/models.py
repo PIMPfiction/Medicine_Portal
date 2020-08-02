@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 # Create your models here.
 from random import randint
-
+from datetime import datetime
 class SuperAdmin(models.Model): 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -93,6 +93,11 @@ class SubCategories(models.Model):
     name = models.TextField(max_length=60)
     category = models.ForeignKey("Categories", on_delete=models.CASCADE)
 
+
+def random_num():
+    first = randint(11111, 99999)
+    return str(first)
+
 class Medicines(models.Model):
     item_no = models.IntegerField(null=True)
     importer = models.ForeignKey("admin_b", default=None, on_delete=models.CASCADE, null=True)
@@ -121,6 +126,11 @@ class Medicines(models.Model):
     pbb_code = models.CharField(max_length=50, default=None, null=True)
 
     #category = models.ForeignKey("SubCategories", on_delete=models.CASCADE, default=None, null=True, blank=True)
+
+    batch_no = models.CharField(max_length=50, default=random_num)
+    manufacturing_date = models.DateTimeField(default=datetime.now, blank=True)
+    expiry_date = models.DateTimeField(default=datetime.now, blank=True)
+    manufacturer_name = models.CharField(max_length=55, default="Manufacturer INC.")
 
     def __str__(self):
         return self.generic

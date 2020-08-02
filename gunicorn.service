@@ -1,0 +1,12 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/medicine_portal
+ExecStart=/usr/local/bin/gunicorn  --error-logfile /var/log/gunicorn.log --access-logfile - --workers 3 --bind unix:/home/ubuntu/medicine_portal/medicine.sock Medicine_Portal.wsgi:application --log-level debug
+
+[Install]
+WantedBy=multi-user.target
