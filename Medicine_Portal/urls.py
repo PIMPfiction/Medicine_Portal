@@ -24,7 +24,7 @@ urlpatterns = [
     path('jet/dashboard/', include('jet.dashboard.urls',
                                    'jet-dashboard')),  # Django JET dashboard URLS
 
-    path('admin/', admin.site.urls),
+    path('kebs_admin/', admin.site.urls),
     path('', include('medicine_app.urls')),
     path('api/', include('medicine_app.api_urls')),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),

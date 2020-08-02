@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name 0.0.0.0; #domain adini koyabiliriz
+    server_name localhost; #domain adini koyabiliriz
     root /home/ubuntu/medicine_portal; # Projenin kök dizini
 
     location /static/ {
