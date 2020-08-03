@@ -131,7 +131,10 @@ class Medicines(models.Model):
     manufacturing_date = models.DateTimeField(default=datetime.now, blank=True)
     expiry_date = models.DateTimeField(default=datetime.now, blank=True)
     manufacturer_name = models.CharField(max_length=55, default="Manufacturer INC.")
-
+    manufactturer_address = models.CharField(max_length=500, default="""Meldi Estate, Near Prasang Party Plot,  
+Opp. Sola Bhagwat, Sayona City Road,  
+Gota, Ahmedabad - 382481  
+Gujarat, India""")
     def __str__(self):
         return self.generic
 
