@@ -7,7 +7,7 @@
         <!-- Begin Page Content -->
         <div class="container-fluid">
             <div class="row">
-
+{% if request.user.is_superuser %}
                 <!-- Earnings (Monthly) Card Example -->
                 <div class="col-xl-3 col-md-6 mb-4">
                   <div class="card border-left-primary shadow h-100 py-2">
@@ -59,14 +59,130 @@
                       </div>
                     </div>
                   </div>
-
+{% endif %}
             </div>
 
+{% if request.user.is_superuser %}
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Waiting for Scan</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Drug Name</th>
+            <th>Quantity</th>
+            <th>Importer Name</th>
+            <th>Target Name</th>
+            <th>Target Phone</th>
+            <th>QR Codes Scanned</th>
+            {% if request.user.is_superuser %}
+            <th>Generate/Download Codes</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tfoot>
+        </tfoot>
+        <tbody>
+        {% for item in unscanned_items %}
+          <tr>
+            <td><a href="/query/{{item.code}}">{{item.medicine.generic}}</a></td>
+            <td>{{item.box.get_items.count}}</td>
+            <td>{{ item.box.importer.name}}</td>
+            <td>{{item.box.target.name }}</td>
+            <td>{{item.box.target.phone }}</td>
+            {% if item.box.received %}
+              <td><span class="badge badge-pill badge-success">Codes Scanned</span></td>
+
+            {% else %}
+            <td><span class="badge badge-pill badge-dark">Not Scanned Yet</span></td>
+            {% endif %}
+            {% if request.user.is_superuser %}
+            <td><a href="/print_codes/{{item.code}}" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                  <i class="fas fa-check"></i>
+                </span>
+                <span class="text">Download</span>
+              </a>
+
+            </td>
+            {% endif %}
+
+          </tr>
+        {% endfor %}
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Received Codes</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Drug Name</th>
+            <th>Quantity</th>
+            <th>Importer Name</th>
+            <th>Target Name</th>
+            <th>Target Phone</th>
+            <th>QR Codes Scanned</th>
+            {% if request.user.is_superuser %}
+            <th>Generate/Download Codes</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tfoot>
+        </tfoot>
+        <tbody>
+        {% for item in scanned_items %}
+          <tr>
+            <td><a href="/query/{{item.code}}">{{item.medicine.generic}}</a></td>
+            <td>{{item.box.get_items.count}}</td>
+            <td>{{ item.box.importer.name}}</td>
+            <td>{{item.box.target.name }}</td>
+            <td>{{item.box.target.phone }}</td>
+            {% if item.box.received %}
+              <td><span class="badge badge-pill badge-success">Codes Scanned</span></td>
+
+            {% else %}
+            <td><span class="badge badge-pill badge-dark">Not Scanned Yet</span></td>
+            {% endif %}
+            {% if request.user.is_superuser %}
+            <td><a href="/print_codes/{{item.code}}" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                  <i class="fas fa-check"></i>
+                </span>
+                <span class="text">Download</span>
+              </a>
+
+            </td>
+            {% endif %}
+
+          </tr>
+        {% endfor %}
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
+{% else %}
 
             <!-- DataTales Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Cartoon List</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Waiting for QR Code Scan</h6>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
@@ -79,13 +195,16 @@
                         <th>Importer Address</th>
                         <th>Importer Phone</th>
                         <th>Importer Email</th>
+                        <th>QR Codes Scanned</th>
+                        {% if request.user.is_superuser %}
                         <th>Generate/Download Codes</th>
+                        {% endif %}
                       </tr>
                     </thead>
                     <tfoot>
                     </tfoot>
                     <tbody>
-                    {% for item in items %}
+                    {% for item in unscanned_items %}
                       <tr>
                         <td><a href="/query/{{item.code}}">{{item.medicine.generic}}</a></td>
                         <td>{{item.box.get_items.count}}</td>
@@ -93,6 +212,13 @@
                         <td>{{ item.box.importer.address}}</td>
                         <td>{{ item.box.importer.phone}}</td>
                         <td>{{ item.box.importer.email}} </td>
+                        {% if item.box.received %}
+                          <td><span class="badge badge-pill badge-success">Codes Scanned</span></td>
+
+                        {% else %}
+                        <td><span class="badge badge-pill badge-dark">Not Scanned Yet</span></td>
+                        {% endif %}
+                        {% if request.user.is_superuser %}
                         <td><a href="/print_codes/{{item.code}}" class="btn btn-success btn-icon-split">
                             <span class="icon text-white-50">
                               <i class="fas fa-check"></i>
@@ -101,6 +227,71 @@
                           </a>
 
                         </td>
+                        {% endif %}
+
+                      </tr>
+                    {% endfor %}
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- IKINCI TABLO -->
+
+
+
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Received Codes</h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th>Drug Name</th>
+                        <th>Quantity</th>
+                        <th>Importer Name</th>
+                        <th>Importer Address</th>
+                        <th>Importer Phone</th>
+                        <th>Importer Email</th>
+                        <th>QR Codes Scanned</th>
+                        {% if request.user.is_superuser %}
+                        <th>Generate/Download Codes</th>
+                        {% endif %}
+                      </tr>
+                    </thead>
+                    <tfoot>
+                    </tfoot>
+                    <tbody>
+                    {% for item in scanned_items %}
+                      <tr>
+                        <td><a href="/query/{{item.code}}">{{item.medicine.generic}}</a></td>
+                        <td>{{item.box.get_items.count}}</td>
+                        <td>{{ item.box.importer.name}}</td>
+                        <td>{{ item.box.importer.address}}</td>
+                        <td>{{ item.box.importer.phone}}</td>
+                        <td>{{ item.box.importer.email}} </td>
+                        {% if item.box.received %}
+                          <td><span class="badge badge-pill badge-success">Codes Scanned</span></td>
+
+                        {% else %}
+                        <td><span class="badge badge-pill badge-dark">Not Scanned Yet</span></td>
+                        {% endif %}
+                        {% if request.user.is_superuser %}
+                        <td><a href="/print_codes/{{item.code}}" class="btn btn-success btn-icon-split">
+                            <span class="icon text-white-50">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span class="text">Download</span>
+                          </a>
+
+                        </td>
+                        {% endif %}
 
                       </tr>
                     {% endfor %}
@@ -111,6 +302,10 @@
               </div>
             </div>
   
+            {% endif %}
+
+
+
           </div>
           <!-- /.container-fluid -->
   

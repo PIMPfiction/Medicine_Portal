@@ -182,7 +182,7 @@ class Items(models.Model): #PACKETS # this will be the main code this will hold 
     box = models.ForeignKey("Boxes", on_delete=models.CASCADE, default=None)
     is_active = models.BooleanField(default=False)
     is_box = models.BooleanField(default=False) #defines 
-    owner = models.ForeignKey(User, default=None, on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey("Admin_C", default=None, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return "%s - %s" % (self.medicine.generic, self.code)
