@@ -7,7 +7,7 @@
         <!-- Begin Page Content -->
         <div class="container-fluid">
             <div class="row">
-
+{% if request.user.is_superuser %}
                 <!-- Earnings (Monthly) Card Example -->
                 <div class="col-xl-3 col-md-6 mb-4">
                   <div class="card border-left-primary shadow h-100 py-2">
@@ -59,27 +59,39 @@
                       </div>
                     </div>
                   </div>
-
+{% endif %}
             </div>
 
-            <form method="POST" >
-              <!-- DataTales Example -->
-              <div class="form-group mb-3">
-                <div class="form-group-prepend">
-                  <span class="input-group-text" id="basic-addon1">Generated Code Count</span>
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Approved Codes</h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered" id="dataTable" width="50%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th>CODE</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                    </tfoot>
+                    <tbody>
+                    {% for item in items %}
+                      <tr>
+                        <td>{{item.code}}</td>
+                      </tr>
+                    {% endfor %}
+            
+                    </tbody>
+                  </table>
                 </div>
-                <input name="box" type="text" class="form-control" placeholder="Code Count" aria-label="Username" aria-describedby="basic-addon1">
               </div>
             </div>
-            <!-- /.container-fluid -->
-            {% csrf_token %}
-            <div class="form-group mb-3">
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-            
-          </form>
 
-          
+
+          </div>
+          <!-- /.container-fluid -->
   
         </div>
         <!-- End of Main Content -->

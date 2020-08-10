@@ -4,8 +4,30 @@ from django.contrib.auth.models import Group
 # Create your models here.
 from random import randint
 from datetime import datetime
+import random
 class SuperAdmin(models.Model): 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+
+class PBB(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.TextField(max_length=60, default="Pharmacy & Poisons Board", null=True)
+    address = models.TextField(max_length=350, default="P.O. Box 27663 – 00506, Nairobi. Lenana Road Opp. DOD", null=True)
+    phone = models.TextField(max_length=60, default="+254 709 770 100", null=True)
+    email = models.TextField(max_length=60, default="info@pharmacyboardkenya.org", null=True)
+
+
+def file_upload(instance, filename):
+    extension = filename.split(".")[-1]
+    return '{0}.{1}'.format(str(random.randint(100,9999999)), extension)
+
+class SystemLogo(models.Model):
+    logo = models.FileField(blank=True, upload_to=file_upload)
+
+
+
+
 
 
 class Admin_A(models.Model):  #THERE WILL BE ONly ONE ADMIN_A CREATED BY SUPERADMIN
@@ -21,27 +43,58 @@ class Admin_A(models.Model):  #THERE WILL BE ONly ONE ADMIN_A CREATED BY SUPERAD
         verbose_name = "super admin"
         verbose_name_plural = "super admin"
 
-class Admin_B(models.Model): #Distrubitors IMPORTERS
-    #user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    name = models.TextField(max_length=60, default=None, null=True)
-    address = models.TextField(max_length=350, default="P.O. Box 99376 - 80100, Mombasa. P.O. Box 2138 - 20100, Nakuru.", null=True)
-    phone = models.TextField(max_length=60, default="+ 254 (20) 694 8000", null=True)
-    email = models.TextField(max_length=60, default="info@kebs.org", null=True)
 
-    # def save(self, *args, **kwargs):
-    #     if not self.id:
-    #         group = Group.objects.get(name="admin_b")
-    #         group.user_set.add(self.user)
-    #     super(Admin_B, self).save(*args, **kwargs)
+class Distributors(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, default=None)
+    name = models.TextField(max_length=60, default="Medcure Healthcare Ltd", null=True)
+    address = models.TextField(max_length=350, default="P.O. Box 14608-00400 Nairobi, Kenya", null=True)
+    phone = models.TextField(max_length=60, default="+254 (0)20 356 9904 ", null=True)
+    email = models.TextField(max_length=60, default="info@medcurehealthcare.com", null=True)
 
-    def __str__(self):
-        return self.name
-    class META:
-        verbose_name = "importers"
-        verbose_name_plural = "importers"
+class Importers(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, default=None)
+    name = models.TextField(max_length=60, default="Medcure Healthcare Ltd", null=True)
+    address = models.TextField(max_length=350, default="P.O. Box 14608-00400 Nairobi, Kenya", null=True)
+    phone = models.TextField(max_length=60, default="+254 (0)20 356 9904 ", null=True)
+    email = models.TextField(max_length=60, default="info@medcurehealthcare.com", null=True)
+
+class Manufacturers(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, default=None)
+    name = models.TextField(max_length=60, default="Medcure Healthcare Ltd", null=True)
+    address = models.TextField(max_length=350, default="P.O. Box 14608-00400 Nairobi, Kenya", null=True)
+    phone = models.TextField(max_length=60, default="+254 (0)20 356 9904 ", null=True)
+    email = models.TextField(max_length=60, default="info@medcurehealthcare.com", null=True)
+
+class Chemists(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, default=None)
+    name = models.TextField(max_length=60, default="Medcure Healthcare Ltd", null=True)
+    address = models.TextField(max_length=350, default="P.O. Box 14608-00400 Nairobi, Kenya", null=True)
+    phone = models.TextField(max_length=60, default="+254 (0)20 356 9904 ", null=True)
+    email = models.TextField(max_length=60, default="info@medcurehealthcare.com", null=True)
 
 
-class Admin_C(models.Model):  # Pharmacy
+# class Admin_B(models.Model): #Distrubitors IMPORTERS
+#     #user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, default=None)
+#     name = models.TextField(max_length=60, default=None, null=True)
+#     address = models.TextField(max_length=350, default="P.O. Box 99376 - 80100, Mombasa. P.O. Box 2138 - 20100, Nakuru.", null=True)
+#     phone = models.TextField(max_length=60, default="+ 254 (20) 694 8000", null=True)
+#     email = models.TextField(max_length=60, default="info@kebs.org", null=True)
+#     #user_type = models.TextField(default=None, null=True, choices=[('Importer','Importer'), ('Distrubitor','Distrubitor')] )
+
+#     # def save(self, *args, **kwargs):
+#     #     if not self.id:
+#     #         group = Group.objects.get(name="admin_b")
+#     #         group.user_set.add(self.user)
+#     #     super(Admin_B, self).save(*args, **kwargs)
+
+#     def __str__(self):
+#         return self.name
+#     class META:
+#         verbose_name = "importers"
+#         verbose_name_plural = "importers"
+
+
+class Pharmacies(models.Model):  # Pharmacy
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.TextField(max_length=60, default=None, null=True)
     address = models.TextField(max_length=350, default=None, null=True)
@@ -61,18 +114,18 @@ class Admin_C(models.Model):  # Pharmacy
 
 
 
-class Stocks(models.Model):
-    medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    super_admin = models.ForeignKey('SuperAdmin', on_delete=models.CASCADE, related_name="superadmin", blank=True, null=True)
-    admin_a = models.ForeignKey('Admin_A', on_delete=models.CASCADE, related_name="admin_a", blank=True, null=True)
-    admin_b = models.ForeignKey('Admin_B', on_delete=models.CASCADE, related_name="admin_b",blank=True,null=True)
-    admin_c = models.ForeignKey('Admin_C', on_delete=models.CASCADE, related_name="admin_c", blank=True, null=True)
-    def __str__(self):
-        for owner in [self.super_admin, self.admin_a, self.admin_b, self.admin_c]:
-            if owner:
-                break
-        return self.medicine.generic + " "  + str(self.quantity) + " " + str(owner.user.username) + " "
+# class Stocks(models.Model):
+#     medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE)
+#     quantity = models.IntegerField()
+#     super_admin = models.ForeignKey('SuperAdmin', on_delete=models.CASCADE, related_name="superadmin", blank=True, null=True)
+#     admin_a = models.ForeignKey('Admin_A', on_delete=models.CASCADE, related_name="admin_a", blank=True, null=True)
+#     admin_b = models.ForeignKey('Admin_B', on_delete=models.CASCADE, related_name="admin_b",blank=True,null=True)
+#     admin_c = models.ForeignKey('Admin_C', on_delete=models.CASCADE, related_name="admin_c", blank=True, null=True)
+#     def __str__(self):
+#         for owner in [self.super_admin, self.admin_a, self.admin_b, self.admin_c]:
+#             if owner:
+#                 break
+#         return self.medicine.generic + " "  + str(self.quantity) + " " + str(owner.user.username) + " "
 
         
 class Brands(models.Model):
@@ -100,7 +153,7 @@ def random_num():
 
 class Medicines(models.Model):
     item_no = models.IntegerField(null=True)
-    importer = models.ForeignKey("admin_b", default=None, on_delete=models.CASCADE, null=True)
+    importer = models.ForeignKey("Importers", default=None, on_delete=models.CASCADE, null=True)
     chemical = models.CharField(max_length=200, default=None)
     generic = models.CharField(max_length=200, default=None)  # item name
     #amount = models.CharField(max_length=200, default=None) # miligram or cLitre 
@@ -130,13 +183,14 @@ class Medicines(models.Model):
     batch_no = models.CharField(max_length=50, default=random_num)
     manufacturing_date = models.DateTimeField(default=datetime.now, blank=True)
     expiry_date = models.DateTimeField(default=datetime.now, blank=True)
-    manufacturer_name = models.CharField(max_length=55, default="Manufacturer INC.")
-    manufactturer_address = models.CharField(max_length=500, default="""Meldi Estate, Near Prasang Party Plot,  
-Opp. Sola Bhagwat, Sayona City Road,  
-Gota, Ahmedabad - 382481  
-Gujarat, India""")
+    manufacturer = models.ForeignKey("Manufacturers", default=None, on_delete=models.CASCADE, null=True)
+
     def __str__(self):
         return self.generic
+
+class SystemCodeCount(models.Model):
+    count = models.TextField(default="100000000000")
+    download = models.TextField(default="100000000000")
 
 
 def code_generation():
@@ -147,12 +201,13 @@ def code_generation():
 
 class Boxes(models.Model): #BOXES
     medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE)
-    importer = models.ForeignKey("admin_b", default=None, on_delete=models.CASCADE, null=True)
+    importer = models.ForeignKey("Importers", default=None, on_delete=models.CASCADE, null=True)
     code = models.TextField(max_length=100, blank=True, default=code_generation)
+
     quantity = models.IntegerField()
     received = models.BooleanField(default=False)
-    target = models.ForeignKey("Admin_C", default=None, on_delete=models.CASCADE, null=True)
-
+    # target = models.ForeignKey("", default=None, on_delete=models.CASCADE, null=True)
+    downloaded = models.BooleanField(default=False)
     # items = models.ManyToManyField("Items", on_delete=models.CASCADE)
 
     def __str__(self):
@@ -177,15 +232,23 @@ class Boxes(models.Model): #BOXES
     
 
 class Items(models.Model): #PACKETS # this will be the main code this will hold the GENERATED CODES
-    medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE)
+    medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE, default=None, null=True)
     code = models.TextField(max_length=100, primary_key=True)
-    box = models.ForeignKey("Boxes", on_delete=models.CASCADE, default=None)
+    first_column = models.TextField(max_length=15, default=None, null=True)
+    box = models.ForeignKey("Boxes", on_delete=models.CASCADE, default=None, null=True)
     is_active = models.BooleanField(default=False)
     is_box = models.BooleanField(default=False) #defines 
-    owner = models.ForeignKey("Admin_C", default=None, on_delete=models.CASCADE, null=True)
+    importer = models.ForeignKey("Importers", on_delete=models.CASCADE, null=True, default=None)
+    manufacturer = models.ForeignKey("Manufacturers", on_delete=models.CASCADE, null=True, default=None)
+    downloaded = models.BooleanField(default=False) #defines
+    is_issued = models.BooleanField(default=False)
+
 
     def __str__(self):
-        return "%s - %s" % (self.medicine.generic, self.code)
+        if self.medicine:
+            return "%s - %s" % (self.medicine.generic, self.code)
+        else:
+            return self.code
 #TODO: autogenreate random key
 #TODO: eger codelar uretıldıyse ve daha stoklara eklenmedıyse is_active false kalicak_ kodlar qrdcodedan taratilip stoga alindiginda is_active alani true olarak degistirilecek
 

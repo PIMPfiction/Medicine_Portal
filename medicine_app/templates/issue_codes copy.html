@@ -59,6 +59,7 @@
                       </div>
                     </div>
                   </div>
+                  
 
             </div>
 
@@ -66,9 +67,51 @@
               <!-- DataTales Example -->
               <div class="form-group mb-3">
                 <div class="form-group-prepend">
-                  <span class="input-group-text" id="basic-addon1">Generated Code Count</span>
+                  <label class="input-group-text" for="inputGroupSelect01">Select Medicine</label>
                 </div>
-                <input name="box" type="text" class="form-control" placeholder="Code Count" aria-label="Username" aria-describedby="basic-addon1">
+                <select name="medicine" class="custom-select" id="inputGroupSelect01">
+                  <option selected>Choose...</option>
+                  {% for medicine in medicines %}
+                  <option value="{{ medicine.id }}">{{medicine.generic}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <label class="input-group-text" for="inputGroupSelect02">Select Importer</label>
+                </div>
+                <select name="importer" class="custom-select" id="inputGroupSelect02">
+                  <option selected>Choose...</option>
+                  {% for importer in importers %}
+                  <option value="{{ importer.id }}">{{importer.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <label class="input-group-text" for="inputGroupSelect01">Select Target</label>
+                </div>
+                <select name="target" class="custom-select" id="inputGroupSelect01">
+                  <option selected>Choose...</option>
+                  {% for target in targets %}
+                  <option value="{{ target.id }}">{{target.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Box Count</span>
+                </div>
+                <input name="box" type="text" class="form-control" placeholder="Number Of Boxes" aria-label="Username" aria-describedby="basic-addon1">
+              </div>
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Packet Count in Boxes</span>
+                </div>
+                <input name="packet" type="text" class="form-control" placeholder="Packet Count" aria-label="Username" aria-describedby="basic-addon1">
               </div>
             </div>
             <!-- /.container-fluid -->
@@ -78,8 +121,6 @@
             </div>
             
           </form>
-
-          
   
         </div>
         <!-- End of Main Content -->

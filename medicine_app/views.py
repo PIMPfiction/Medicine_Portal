@@ -33,7 +33,7 @@ def user_login(request):
                 login(request, user)
             return HttpResponseRedirect("/")
         else:
-            return HttpResponse("xd")
+            return HttpResponseRedirect("/")
     else:
         return render(request, "login.html", {})
 
@@ -44,7 +44,8 @@ def user_logout(request):
 
 @login_required
 def index(request):
-    if request.user.is_superuser:
+    user = request.user
+    if user.is_superuser:
         user = User.objects.get(username="root")
         items = Items.objects.filter(is_box=True)
         scanned_items = items.filter(box__received=True)
@@ -54,72 +55,140 @@ def index(request):
             "unscanned_items":unscanned_items,
             "medicine_count":Medicines.objects.all().count(),
             "code_count":Items.objects.all().count(),
-            "importers_count":Admin_B.objects.all().count()
+            "importers_count":Importers.objects.all().count()
             }
         )
-    else:
-        user = request.user
-        scanned = Items.objects.filter(is_box=True, owner=Admin_C.objects.get(user=request.user)).filter(box__received=True)
-        unscanned = Items.objects.filter(is_box=True, owner=Admin_C.objects.get(user=request.user)).filter(box__received=False)
-        return render(request, "index.html", {
-            "scanned_items":scanned,
-            "unscanned_items":unscanned,
-            "medicine_count":Medicines.objects.all().count(),
-            "code_count":scanned.count(),
-            "importers_count":Admin_B.objects.all().count()
+    elif PBB.objects.filter(user=user):
+        return HttpResponseRedirect("/dashboard")
+    elif Importers.objects.filter(user=user):
+        items = Items.objects.filter(importer=Importers.objects.get(user=user))
+        return render(request, "users_index.html", {
+            "code_count":items.count(),
+            "items":items,
             }
         )
+    elif Manufacturers.objects.get(user=user):
+        items = Items.objects.filter(importer=Importers.objects.get(user=user))
+        return render(request, "users_index.html", {
+            "code_count":items.count(),
+            }
+        )
+        
+
+
+# def code_generation(): # first sequential code
+#     # 100018266872|0281133943854617
+#     first = randint(111111111111, 999999999999)
+#     second = randint(1111111111111111, 9999999999999999)
+#     return str(first)+"-"+str(second)
+
+def second_code_generate():
+    return randint(1111111111111111, 9999999999999999)
+
+
 @login_required
 def generate_codes(request):
     if request.user.is_superuser:
         if request.method == "GET":
             user = User.objects.all()[0]
             medicines = Medicines.objects.all()
-            importers = Admin_B.objects.all()
-            targets = Admin_C.objects.all()
+            importers = Importers.objects.all()
+            targets = Pharmacies.objects.all()
             return render(request, "generate_codes.html", {
                 "medicines":medicines,
                 "importers":importers,
                 "targets":targets,
                 "medicine_count":Medicines.objects.all().count(),
                 "code_count":Items.objects.all().count(),
-                "importers_count":Admin_B.objects.all().count()
 
             })
         elif request.method == "POST":
-            medicine_id = request.POST.get("medicine")
-            importer_id = request.POST.get("importer")
-            owner_id = request.POST.get("owner")
-            target_id = request.POST.get("target")
+            # medicine_id = request.POST.get("medicine")
+            # importer_id = request.POST.get("importer")
+            # owner_id = request.POST.get("owner")
+            # target_id = request.POST.get("target")
             box_count = request.POST.get("box")
-            packet_count = request.POST.get("packet")
-            medicine = Medicines.objects.get(id=medicine_id)
-            importer = Admin_B.objects.get(id=importer_id)
-            target = Admin_C.objects.get(id=target_id)
-            print(target_id, target)
+            download_count = request.POST.get("download_count")
+            # packet_count = request.POST.get("packet")
+            # medicine = Medicines.objects.get(id=medicine_id)
+            # importer = Admin_B.objects.get(id=importer_id)
+            # target = Admin_C.objects.get(id=target_id)
+            #print(target_id, target)
             # loop_count = 0
-            for i in range(1, int(box_count)+1):
-                box = Boxes.objects.create(
-                    medicine=medicine,
-                    importer=importer,
-                    quantity=int(packet_count),
-                    target=target,
-                    )
-                item = Items.objects.create(box=box, medicine=box.medicine, code=box.code, is_box=True, owner=target)
-                for i in range(1, box.quantity+1):
-                    first, second = box.code.split("-")
-                    item_code = str(int(first)+i)+"-"+second
-                    item = Items.objects.create(box=box, medicine=box.medicine, code=item_code)
+            if box_count:
+                system_code  = SystemCodeCount.objects.all()[0]
+                first = system_code.count
+                system_code.count = str(int(first) + int(box_count))
+                system_code.save()
+                for i in range(1, int(box_count)+1):
+                    # box = Boxes.objects.create(
+                    #     medicine=medicine,
+                    #     importer=importer,
+                    #     quantity=int(packet_count),
+                    #     target=target,
+                    #     )
+                    second = second_code_generate()
+                    item_code = str(int(first)+i)+"-"+str(second)
+                    item = Items.objects.create(code=item_code, first_column=str(int(first)+i))
                     item.save()
-                    # loop_count +=1
-                    # print("{} loop   {} created".format(loop_count,item_code))
-            # item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
-            # for i in range(1, self.quantity+1):
-            #     first, second = self.code.split("-")
-            #     item_code = str(int(first)+i)+"-"+second
-            #     item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
-            #     item.save()
-            return HttpResponseRedirect("/")
+                        # loop_count +=1
+                        # print("{} loop   {} created".format(loop_count,item_code))
+                # item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
+                # for i in range(1, self.quantity+1):
+                #     first, second = self.code.split("-")
+                #     item_code = str(int(first)+i)+"-"+second
+                #     item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
+                #     item.save()
+                return HttpResponseRedirect("/")
+
+
+def download_codes(request):
+    user = request.user
+    if request.user.is_superuser:
+        if request.method == "GET":
+            user = User.objects.all()[0]
+            medicines = Medicines.objects.all()
+            importers = Importers.objects.all()
+            targets = Pharmacies.objects.all()
+            return render(request, "download_codes.html", {
+                "medicines":medicines,
+                "importers":importers,
+                "targets":targets,
+                "medicine_count":Medicines.objects.all().count(),
+                "code_count":Items.objects.all().count(),
+                "importers_count":importers.count()
+
+            })
+        elif request.method == "POST":
+            download_count = request.POST.get("download_count")
+            print(download_count)
+            system_code  = SystemCodeCount.objects.all()[0]
+            last_download = system_code.download
+            system_code.download = str(int(last_download) + int(download_count))
+            system_code.save()
+            #print process
+            random_integer = str(randint(111111,9999999))
+            f = open("static/media/{}.txt".format(random_integer), "w")
+            for x in range(int(last_download)+1, int(last_download)+int(download_count)+1):
+                print(x)
+                item = Items.objects.get(first_column=x)
+                item.downloaded = True
+                item.save()
+                f.write("PBB:"+str(item.code)+"\n")
+            f.close()
+            file_instance = Files.objects.create(printed_by=user)
+            f = open("static/media/{}.txt".format(random_integer), "r") #always open in read mode r
+            random_integer2 = str(randint(111111,9999999))
+            file_instance.exported_file.save("{}.txt".format(random_integer2), File(f))
+            file_instance.save()
+            return HttpResponseRedirect("/download/{}".format(file_instance.id))
+
+
+
+
+
+
+
 
 
 @login_required
@@ -136,6 +205,9 @@ def print_codes(request, code):
     random_integer2 = str(randint(111111,9999999))
     file_instance.exported_file.save("{}.txt".format(random_integer2), File(f))
     file_instance.save()
+    box = item.box 
+    box.downloaded = True 
+    box.save()
     return HttpResponseRedirect("/download/{}".format(file_instance.id))
 
 @login_required
@@ -169,7 +241,179 @@ def qrcode_setuser(request, code, id):
     return HttpResponse("Owners changed")
 
 
+def receive_codes(request):
+    items = Items.objects.all()
+    ##scanned_items = items.filter(box__received=True)
+    ##unscanned_items = items.filter(box__received=False)
+    generated = items.filter(downloaded=False).order_by("code")
+    downloaded = items.filter(downloaded=True).order_by("code")
+    if request.method == "GET":
+        return render(request, "pbb_receive.html",  {
+                ##"scanned_items":scanned_items,
+                ##"unscanned_items":unscanned_items,
+                "manufacturers":Manufacturers.objects.all().count(),
+                "importers":Importers.objects.all().count(),
+                "distributors":Distributors.objects.all().count(),
+                "pharmacies":Pharmacies.objects.all().count(),
+                "generated":generated,
+                "downloaded_items": downloaded,
+                "medicine_count":Medicines.objects.all().count(),
+                "code_count":items.count(),
+                "downloaded_count":downloaded.count(),
+                "importers_count":Importers.objects.all().count(),
+                "downloaded_rate": str(int(items.count()) - int(downloaded.count())),
+                "pbb_approved":items.filter(is_active=True).count()
+                })
+    elif request.method == "POST":
+        first = request.POST.get("first")
+        last = request.POST.get("last")
+        for x in range(int(first), int(last)+1):
+            try:
+                item = Items.objects.get(first_column=x)
+            except:
+                alert = "Codes Are Not Available"
+                return render(request, "pbb_receive.html",  {
+                    ##"scanned_items":scanned_items,
+                    ##"unscanned_items":unscanned_items,
+                    "manufacturers":Manufacturers.objects.all().count(),
+                    "importers":Importers.objects.all().count(),
+                    "distributors":Distributors.objects.all().count(),
+                    "pharmacies":Pharmacies.objects.all().count(),
+                    "generated":generated,
+                    "downloaded_items": downloaded,
+                    "medicine_count":Medicines.objects.all().count(),
+                    "code_count":items.count(),
+                    "downloaded_count":downloaded.count(),
+                    "importers_count":Importers.objects.all().count(),
+                    "downloaded_rate": str(int(items.count()) - int(downloaded.count())),
+                    "pbb_approved":items.filter(is_active=True).count(),
+                    "alert":alert,
+                    }
+                )
+            if item.is_active:
+                alert = "Already Registered"
+                return render(request, "pbb_receive.html",  {
+                    ##"scanned_items":scanned_items,
+                    ##"unscanned_items":unscanned_items,
+                    "manufacturers":Manufacturers.objects.all().count(),
+                    "importers":Importers.objects.all().count(),
+                    "distributors":Distributors.objects.all().count(),
+                    "pharmacies":Pharmacies.objects.all().count(),
+                    "generated":generated,
+                    "downloaded_items": downloaded,
+                    "medicine_count":Medicines.objects.all().count(),
+                    "code_count":items.count(),
+                    "downloaded_count":downloaded.count(),
+                    "importers_count":Importers.objects.all().count(),
+                    "downloaded_rate": str(int(items.count()) - int(downloaded.count())),
+                    "pbb_approved":items.filter(is_active=True).count(),
+                    "alert":alert,
+                    }
+                )
+            item.is_active = True
+            item.save()
+        return HttpResponseRedirect("/receive_codes")
+
 def dashboard(request):
-    user = User.objects.all()[0]
-    boxes = Items.objects.filter(owner=user, is_box=True)
-    return render(request, "dashboard.html", {"boxes":boxes})
+    if request.user.is_superuser:
+        user = User.objects.get(username="root")
+        items = Items.objects.all()
+        ##scanned_items = items.filter(box__received=True)
+        ##unscanned_items = items.filter(box__received=False)
+        generated = items.filter(downloaded=False).order_by("code")
+        downloaded = items.filter(downloaded=True).order_by("code")
+
+        return render(request, "dashboard.html", {
+            ##"scanned_items":scanned_items,
+            ##"unscanned_items":unscanned_items,
+            "generated":generated,
+            "downloaded_items": downloaded,
+            "medicine_count":Medicines.objects.all().count(),
+            "code_count":items.count(),
+            "downloaded_count":downloaded.count(),
+            "importers_count":Admin_B.objects.all().count(),
+            "downloaded_rate": str(int(items.count()) - int(downloaded.count()))
+            }
+        )
+    elif PBB.objects.filter(user=request.user):
+        items = Items.objects.all()
+        ##scanned_items = items.filter(box__received=True)
+        ##unscanned_items = items.filter(box__received=False)
+        generated = items.filter(downloaded=False).order_by("code")
+        downloaded = items.filter(downloaded=True).order_by("code")
+
+        return render(request, "pbb_dashboard.html", {
+            ##"scanned_items":scanned_items,
+            ##"unscanned_items":unscanned_items,
+            "manufacturers":Manufacturers.objects.all().count(),
+            "importers":Importers.objects.all().count(),
+            "distributors":Distributors.objects.all().count(),
+            "pharmacies":Pharmacies.objects.all().count(),
+            "chemistis":Chemists.objects.all().count(),
+            "generated":generated,
+            "downloaded_items": downloaded,
+            "medicine_count":Medicines.objects.all().count(),
+            "code_count":items.count(),
+            "downloaded_count":downloaded.count(),
+            "importers_count":Importers.objects.all().count(),
+            "downloaded_rate": str(int(items.count()) - int(downloaded.count()))
+            }
+        )
+
+
+
+def issue_codes(request):
+    if request.method == "GET":
+        importers = Importers.objects.all()
+
+        return render(request, "pbb_issue_codes.html", {
+            "manufacturers":Manufacturers.objects.all(),
+            "importers":Importers.objects.all(),
+            "distributors":Distributors.objects.all(),
+            "pharmacies":Pharmacies.objects.all(),
+            "chemistis":Chemists.objects.all(),
+            "medicine_count":Medicines.objects.all().count(),
+            "code_count":Items.objects.all().count(),
+            "manufacturers_count":Manufacturers.objects.all().count(),
+            "importers_count":Importers.objects.all().count(),
+            "distributors_count":Distributors.objects.all().count(),
+            "pharmacies_count":Pharmacies.objects.all().count(),
+            "chemists_count":Chemists.objects.all().count(),
+            "pbb_approved":Items.objects.filter(is_active=True).count(),
+
+        })
+    elif request.method == "POST":
+        # medicine_id = request.POST.get("medicine")
+        importer_id = request.POST.get("importer")
+        manufacturer_id = request.POST.get("manufacturer")
+        # target_id = request.POST.get("target")
+        download_count = request.POST.get("download_count")
+        # packet_count = request.POST.get("packet")
+        # medicine = Medicines.objects.get(id=medicine_id)
+        if importer_id != "Choose...":
+            importer = Importers.objects.get(id=importer_id)
+        else:
+            importer = None
+        if manufacturer_id != "Choose...":
+            manufacturer = Manufacturers.objects.get(id=manufacturer_id)
+        else:
+            manufacturer = None
+        first = request.POST.get("first")
+        last = request.POST.get("last")
+        for x in range(int(first), int(last)+1):
+            item = Items.objects.get(first_column=x)
+            item.is_issued = True
+            if importer:
+                item.importer = importer
+            elif manufacturer:
+                item.manufacturer = manufacturer
+            item.save()
+                    # loop_count +=1
+                    # print("{} loop   {} created".format(loop_count,item_code))
+            # item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
+            # for i in range(1, self.quantity+1):
+            #     first, second = self.code.split("-")
+            #     item_code = str(int(first)+i)+"-"+second
+            #     item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
+            #     item.save()
+        return HttpResponseRedirect("/")

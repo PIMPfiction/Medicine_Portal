@@ -49,8 +49,8 @@
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Downloaded Codes</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{downloaded_count}}</div>
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registered Importers</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{importers_count}}</div>
                           </div>
                           <div class="col-auto">
                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -59,45 +59,56 @@
                       </div>
                     </div>
                   </div>
-
-
-                <!-- Earnings (Monthly) Card Example -->
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Codes Available To Download</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{downloaded_rate}}</div>
-                            </div>
-                            <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
 {% endif %}
             </div>
 
 <div class="card shadow mb-4">
   <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Generated</h6>
+    <h6 class="m-0 font-weight-bold text-primary">Waiting for Scan</h6>
   </div>
   <div class="card-body">
     <div class="table-responsive">
-      <table class="table table-bordered" id="dataTable" width="50%" cellspacing="0">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
           <tr>
-            <th>CODE</th>
+            <th>Drug Name</th>
+            <th>Quantity</th>
+            <th>Importer Name</th>
+            <th>Target Name</th>
+            <th>Target Phone</th>
+            <th>QR Codes Scanned</th>
+            {% if request.user.is_superuser %}
+            <th>Generate/Download Codes</th>
+            {% endif %}
           </tr>
         </thead>
         <tfoot>
         </tfoot>
         <tbody>
-        {% for item in generated %}
+        {% for item in unscanned_items %}
           <tr>
-            <td>{{item.code}}</td>
+            <td><a href="/query/{{item.code}}">{{item.medicine.generic}}</a></td>
+            <td>{{item.box.get_items.count}}</td>
+            <td>{{ item.box.importer.name}}</td>
+            <td>{{item.box.target.name }}</td>
+            <td>{{item.box.target.phone }}</td>
+            {% if item.box.received %}
+              <td><span class="badge badge-pill badge-success">Codes Scanned</span></td>
+
+            {% else %}
+            <td><span class="badge badge-pill badge-dark">Not Scanned Yet</span></td>
+            {% endif %}
+            {% if request.user.is_superuser %}
+            <td><a href="/print_codes/{{item.code}}" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                  <i class="fas fa-check"></i>
+                </span>
+                <span class="text">Download</span>
+              </a>
+
+            </td>
+            {% endif %}
+
           </tr>
         {% endfor %}
 
@@ -109,22 +120,51 @@
 
 <div class="card shadow mb-4">
   <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Downloaded</h6>
+    <h6 class="m-0 font-weight-bold text-primary">Received Codes</h6>
   </div>
   <div class="card-body">
     <div class="table-responsive">
-      <table class="table table-bordered" id="dataTable" width="50%" cellspacing="0">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
         <thead>
           <tr>
-            <th>Code</th>
+            <th>Drug Name</th>
+            <th>Quantity</th>
+            <th>Importer Name</th>
+            <th>Target Name</th>
+            <th>Target Phone</th>
+            <th>QR Codes Scanned</th>
+            {% if request.user.is_superuser %}
+            <th>Generate/Download Codes</th>
+            {% endif %}
           </tr>
         </thead>
         <tfoot>
         </tfoot>
         <tbody>
-        {% for item in downloaded_items %}
-        <tr>
-            <td>{{item.code}}</td>
+        {% for item in scanned_items %}
+          <tr>
+            <td><a href="/query/{{item.code}}">{{item.medicine.generic}}</a></td>
+            <td>{{item.box.get_items.count}}</td>
+            <td>{{ item.box.importer.name}}</td>
+            <td>{{item.box.target.name }}</td>
+            <td>{{item.box.target.phone }}</td>
+            {% if item.box.received %}
+              <td><span class="badge badge-pill badge-success">Codes Scanned</span></td>
+
+            {% else %}
+            <td><span class="badge badge-pill badge-dark">Not Scanned Yet</span></td>
+            {% endif %}
+            {% if request.user.is_superuser %}
+            <td><a href="/print_codes/{{item.code}}" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                  <i class="fas fa-check"></i>
+                </span>
+                <span class="text">Download</span>
+              </a>
+
+            </td>
+            {% endif %}
+
           </tr>
         {% endfor %}
 

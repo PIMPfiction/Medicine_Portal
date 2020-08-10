@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                  <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registered Drugs</div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{medicine_count}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+
+
+
+
+                                  <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                  <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registered Manufacturers</div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{manufacturers_count}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                  <!-- Earnings (Monthly) Card Example -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registered Importers</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{importers_count}}</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+                                    <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                  <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registered Distributors</div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{distributors_count}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                  <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registered Pharmacies</div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{pharmacies_count}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registered Chemists</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{chemists_count}}</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                  <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">PBB Aproved Code Count</div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{pbb_approved}}</div>
+                        </div>
+                        <div class="col-auto">
+                          <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+            <form method="POST" >
+              <!-- DataTales Example -->
+
+
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <label class="input-group-text" for="inputGroupSelect02">Select Importer</label>
+                </div>
+                <select name="importer" class="custom-select" id="inputGroupSelect02">
+                  <option selected>Choose...</option>
+                  {% for importer in importers %}
+                  <option value="{{ importer.id }}">{{importer.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <label class="input-group-text" for="inputGroupSelect01">Select Manufacturer</label>
+                </div>
+                <select name="manufacturer" class="custom-select" id="inputGroupSelect01">
+                  <option selected>Choose...</option>
+                  {% for manufacturer in manufacturers %}
+                  <option value="{{ manufacturer.id }}">{{manufacturer.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">First Code of the Roll</span>
+                </div>
+                <input name="first" type="text" class="form-control" placeholder="Code Number" aria-label="Username" aria-describedby="basic-addon1">
+              </div>
+              
+            </div>
+              <div class="form-group mb-3">
+                  <div class="form-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Last Code of the Roll</span>
+                  </div>
+                  <input name="last" type="text" class="form-control" placeholder="Code Number" aria-label="Username" aria-describedby="basic-addon1">
+              </div>
+
+            </div>
+            <!-- /.container-fluid -->
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            
+          </form>
+  
+        </div>
+        <!-- End of Main Content -->
+  
+
+{% endblock content %}
