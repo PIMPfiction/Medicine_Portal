@@ -64,13 +64,26 @@ def index(request):
         items = Items.objects.filter(importer=Importers.objects.get(user=user))
         return render(request, "users_index.html", {
             "code_count":items.count(),
+            "used":items.filter(used=True),
             "items":items,
             }
         )
-    elif Manufacturers.objects.get(user=user):
+    elif Manufacturers.objects.filter(user=user):
         items = Items.objects.filter(importer=Importers.objects.get(user=user))
         return render(request, "users_index.html", {
             "code_count":items.count(),
+            "used":items.filter(used=True),
+            }
+        )
+    elif Pharmacies.objects.filter(user=user) or Chemists.objects.filter(user=user):
+        items = Items.objects.filter(box__receiver=user, is_box=True)
+        scanned = items.filter(box__received=True)
+        unscanned = items.filter(box__received=False)
+        return render(request, "table.html", {
+            "code_count":items.count(),
+            #"used":items,
+            "unscanned_items":unscanned,
+            "items":scanned,
             }
         )
         
@@ -363,57 +376,117 @@ def dashboard(request):
 
 
 def issue_codes(request):
-    if request.method == "GET":
-        importers = Importers.objects.all()
+    user = request.user
+    check_pbb = PBB.objects.filter(user=user)
+    if check_pbb: # if user is PBB
+        if request.method == "GET":
+            importers = Importers.objects.all()
 
-        return render(request, "pbb_issue_codes.html", {
-            "manufacturers":Manufacturers.objects.all(),
-            "importers":Importers.objects.all(),
-            "distributors":Distributors.objects.all(),
-            "pharmacies":Pharmacies.objects.all(),
-            "chemistis":Chemists.objects.all(),
-            "medicine_count":Medicines.objects.all().count(),
-            "code_count":Items.objects.all().count(),
-            "manufacturers_count":Manufacturers.objects.all().count(),
-            "importers_count":Importers.objects.all().count(),
-            "distributors_count":Distributors.objects.all().count(),
-            "pharmacies_count":Pharmacies.objects.all().count(),
-            "chemists_count":Chemists.objects.all().count(),
-            "pbb_approved":Items.objects.filter(is_active=True).count(),
+            return render(request, "pbb_issue_codes.html", {
+                "manufacturers":Manufacturers.objects.all(),
+                "importers":Importers.objects.all(),
+                "distributors":Distributors.objects.all(),
+                "pharmacies":Pharmacies.objects.all(),
+                "chemistis":Chemists.objects.all(),
+                "medicine_count":Medicines.objects.all().count(),
+                "code_count":Items.objects.all().count(),
+                "manufacturers_count":Manufacturers.objects.all().count(),
+                "importers_count":Importers.objects.all().count(),
+                "distributors_count":Distributors.objects.all().count(),
+                "pharmacies_count":Pharmacies.objects.all().count(),
+                "chemists_count":Chemists.objects.all().count(),
+                "pbb_approved":Items.objects.filter(is_active=True).count(),
 
-        })
-    elif request.method == "POST":
-        # medicine_id = request.POST.get("medicine")
-        importer_id = request.POST.get("importer")
-        manufacturer_id = request.POST.get("manufacturer")
-        # target_id = request.POST.get("target")
-        download_count = request.POST.get("download_count")
-        # packet_count = request.POST.get("packet")
-        # medicine = Medicines.objects.get(id=medicine_id)
-        if importer_id != "Choose...":
-            importer = Importers.objects.get(id=importer_id)
+            })
+        elif request.method == "POST":
+            # medicine_id = request.POST.get("medicine")
+            importer_id = request.POST.get("importer")
+            manufacturer_id = request.POST.get("manufacturer")
+            # target_id = request.POST.get("target")
+            download_count = request.POST.get("download_count")
+            # packet_count = request.POST.get("packet")
+            # medicine = Medicines.objects.get(id=medicine_id)
+            if importer_id != "Choose...":
+                importer = Importers.objects.get(id=importer_id)
+            else:
+                importer = None
+            if manufacturer_id != "Choose...":
+                manufacturer = Manufacturers.objects.get(id=manufacturer_id)
+            else:
+                manufacturer = None
+            first = request.POST.get("first")
+            last = request.POST.get("last")
+            for x in range(int(first), int(last)+1):
+                item = Items.objects.get(first_column=x)
+                item.is_issued = True
+                if importer:
+                    item.importer = importer
+                elif manufacturer:
+                    item.manufacturer = manufacturer
+                item.save()
+                        # loop_count +=1
+                        # print("{} loop   {} created".format(loop_count,item_code))
+                # item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
+                # for i in range(1, self.quantity+1):
+                #     first, second = self.code.split("-")
+                #     item_code = str(int(first)+i)+"-"+second
+                #     item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
+                #     item.save()
+            return HttpResponseRedirect("/")
+    else:
+        check_importer = Importers.objects.filter(user=user)
+        check_manufacturer = Manufacturers.objects.filter(user=user)
+        if check_importer:
+            medicines = Medicines.objects.filter(importer=check_importer[0])
+            items = Items.objects.filter(importer=check_importer[0])
+        elif check_distributor:
+            medicines = Medicines.objects.filter(manufacturer=check_menufacturer[0])
+            items = Items.objects.filter(manufacturer=check_manufacturer[0])
         else:
-            importer = None
-        if manufacturer_id != "Choose...":
-            manufacturer = Manufacturers.objects.get(id=manufacturer_id)
-        else:
-            manufacturer = None
-        first = request.POST.get("first")
-        last = request.POST.get("last")
-        for x in range(int(first), int(last)+1):
-            item = Items.objects.get(first_column=x)
-            item.is_issued = True
-            if importer:
-                item.importer = importer
-            elif manufacturer:
-                item.manufacturer = manufacturer
-            item.save()
-                    # loop_count +=1
-                    # print("{} loop   {} created".format(loop_count,item_code))
-            # item = Items.objects.create(box=self, medicine=self.medicine, code=self.code, is_box=True)
-            # for i in range(1, self.quantity+1):
-            #     first, second = self.code.split("-")
-            #     item_code = str(int(first)+i)+"-"+second
-            #     item = Items.objects.create(box=self, medicine=self.medicine, code=item_code)
-            #     item.save()
-        return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/")
+        if request.method == "GET":
+            return render(request, "user_issue_codes.html", {
+                "medicines":medicines,
+                "code_count":items.count(),
+                "used":items.filter(used=True),
+            })
+        elif request.method == "POST":
+            medicine_id = request.POST.get("medicine")
+            box = int(request.POST.get("box"))
+            packet = int(request.POST.get("packet"))
+            totalCode_need = (box * packet) + box
+            print(totalCode_need)
+            medicine = Medicines.objects.get(id=medicine_id)
+            code_count = items.count()
+            counter = 0
+            for i in range(1, box+1):
+                item = items[counter]
+                box_obj = Boxes.objects.create(medicine=medicine, code=item.code, quantity=packet)
+                box_obj.save()
+                item.medicine = medicine
+                if check_importer:
+                    item.importer = check_importer[0]
+                elif check_manufacturer:
+                    item.manufacturer = check_manufacturer[0]
+                item.is_box = True
+                item.box = box_obj
+                item.used = True
+                item.save()
+                counter += 1
+                for j in range(1, packet+1):
+                    item = items[counter]
+                    item.medicine = medicine
+                    if check_importer:
+                        item.importer = check_importer[0]
+                    elif check_manufacturer:
+                        item.manufacturer = check_manufacturer[0]
+                    item.box = box_obj
+                    item.used = True
+                    item.save()
+                    counter+=1
+                
+                
+
+                
+                    
+

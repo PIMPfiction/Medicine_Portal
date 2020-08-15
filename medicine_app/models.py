@@ -153,7 +153,8 @@ def random_num():
 
 class Medicines(models.Model):
     item_no = models.IntegerField(null=True)
-    importer = models.ForeignKey("Importers", default=None, on_delete=models.CASCADE, null=True)
+    importer = models.ForeignKey("Importers", default=None, on_delete=models.CASCADE, null=True, blank=True)
+    distributor = models.ForeignKey("Distributors", default=None, on_delete=models.CASCADE, null=True, blank=True)
     chemical = models.CharField(max_length=200, default=None)
     generic = models.CharField(max_length=200, default=None)  # item name
     #amount = models.CharField(max_length=200, default=None) # miligram or cLitre 
@@ -183,7 +184,7 @@ class Medicines(models.Model):
     batch_no = models.CharField(max_length=50, default=random_num)
     manufacturing_date = models.DateTimeField(default=datetime.now, blank=True)
     expiry_date = models.DateTimeField(default=datetime.now, blank=True)
-    manufacturer = models.ForeignKey("Manufacturers", default=None, on_delete=models.CASCADE, null=True)
+    manufacturer = models.ForeignKey("Manufacturers", default=None, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.generic
@@ -203,6 +204,7 @@ class Boxes(models.Model): #BOXES
     medicine = models.ForeignKey("Medicines", on_delete=models.CASCADE)
     importer = models.ForeignKey("Importers", default=None, on_delete=models.CASCADE, null=True)
     code = models.TextField(max_length=100, blank=True, default=code_generation)
+    receiver = models.ForeignKey(User, default=None, on_delete=models.CASCADE, null=True)
 
     quantity = models.IntegerField()
     received = models.BooleanField(default=False)
@@ -236,13 +238,14 @@ class Items(models.Model): #PACKETS # this will be the main code this will hold 
     code = models.TextField(max_length=100, primary_key=True)
     first_column = models.TextField(max_length=15, default=None, null=True)
     box = models.ForeignKey("Boxes", on_delete=models.CASCADE, default=None, null=True)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False) # kod admin tarafindan yararatukdu
     is_box = models.BooleanField(default=False) #defines 
     importer = models.ForeignKey("Importers", on_delete=models.CASCADE, null=True, default=None)
+    distributor = models.ForeignKey("Distributors", default=None, on_delete=models.CASCADE, null=True, blank=True)
     manufacturer = models.ForeignKey("Manufacturers", on_delete=models.CASCADE, null=True, default=None)
     downloaded = models.BooleanField(default=False) #defines
-    is_issued = models.BooleanField(default=False)
-
+    is_issued = models.BooleanField(default=False) # pbb bu kodu birisine verdi
+    used = models.BooleanField(default=False) # importer veya distributor bu kodu kullandi
 
     def __str__(self):
         if self.medicine:

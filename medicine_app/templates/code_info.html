@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'eczaci_base.html' %}
 
 
 
@@ -34,7 +34,11 @@
                       <tr>
                         <td>{{item.medicine.generic}}</td>
                         <td>{{ packet.code}}</td>
-                        <td>{{ packet.box.importer.name}}</td>
+                        {% if packet.importer %}
+                          <td>{{ packet.box.importer.name}}</td>
+                        {% else %}
+                          <td>{{ packet.box.distributor.name}}</td>
+                        {% endif %}
                       </tr>
                     {% endfor %}
 

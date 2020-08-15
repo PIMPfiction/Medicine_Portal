@@ -1,0 +1,119 @@
+{% extends 'eczaci_base.html' %}
+
+
+
+{% block content %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+            </div>
+
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Waiting for Scan</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Drug Name</th>
+            <th>Quantity</th>
+            <th>Importer/Distributor</th>
+            <th>Manufacturer Name</th>
+            <th>QR Codes Scanned</th>
+            {% if request.user.is_superuser %}
+            <th>Generate/Download Codes</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tfoot>
+        </tfoot>
+        <tbody>
+        {% for item in unscanned_items %}
+          <tr>
+            <td><a href="/query/{{item.code}}">{{item.medicine.generic}}</a></td>
+            <td>{{item.box.get_items.count}}</td>
+            {% if item.importer %}
+                <td>{{ item.box.importer.name}}</td>
+            {% else %}
+                <td>{{ item.box.distributor.name}}</td>
+            {% endif %}
+            <td>{{item.medicine.manufacturer.name }}</td>
+            {% if item.box.received %}
+              <td><span class="badge badge-pill badge-success">Codes Scanned</span></td>
+
+            {% else %}
+            <td><span class="badge badge-pill badge-dark">Not Scanned Yet</span></td>
+            {% endif %}
+
+          </tr>
+        {% endfor %}
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Received Codes</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Drug Name</th>
+            <th>Quantity</th>
+            <th>Importer/Distributor Name</th>
+            <th>Manufacturer Name</th>
+            <th>QR Codes Scanned</th>
+            {% if request.user.is_superuser %}
+            <th>Generate/Download Codes</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tfoot>
+        </tfoot>
+        <tbody>
+        {% for item in items %}
+          <tr>
+            <td><a href="/query/{{item.code}}">{{item.medicine.generic}}</a></td>
+            <td>{{item.box.get_items.count}}</td>
+            {% if item.importer %}
+                <td>{{ item.box.importer.name}}</td>
+            {% else %}
+                <td>{{ item.box.distributor.name}}</td>
+            {% endif %}
+            <td>{{item.medicine.manufacturer.name }}</td>
+            {% if item.box.received %}
+              <td><span class="badge badge-pill badge-success">Codes Scanned</span></td>
+
+            {% else %}
+            <td><span class="badge badge-pill badge-dark">Not Scanned Yet</span></td>
+            {% endif %}
+
+          </tr>
+        {% endfor %}
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+          </div>
+          <!-- /.container-fluid -->
+  
+        </div>
+        <!-- End of Main Content -->
+  
+
+{% endblock content %}
