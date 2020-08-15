@@ -48,6 +48,39 @@
 
             </div>
 
+            {% if box_codes %}
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">These Codes Are For Boxes</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Code</th>
+
+                        </tr>
+                      </thead>
+                      <tfoot>
+                      </tfoot>
+                      <tbody>
+                      {% for box in box_codes %}
+                        <tr>
+                          <td><a href="#">{{box.code}}</a></td>
+              
+                        </tr>
+                      {% endfor %}
+              
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            {% endif %}
+
+
 
 
 

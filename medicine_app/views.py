@@ -61,10 +61,12 @@ def index(request):
     elif PBB.objects.filter(user=user):
         return HttpResponseRedirect("/dashboard")
     elif Importers.objects.filter(user=user):
-        items = Items.objects.filter(importer=Importers.objects.get(user=user))
+        items = Items.objects.filter(importer=Importers.objects.get(user=user)).order_by("first_column")
+        print(items.count())
+        print(items.values("code"))
         return render(request, "users_index.html", {
             "code_count":items.count(),
-            "used":items.filter(used=True),
+            "used":items.filter(used=True).count(),
             "items":items,
             }
         )
@@ -72,18 +74,19 @@ def index(request):
         items = Items.objects.filter(importer=Importers.objects.get(user=user))
         return render(request, "users_index.html", {
             "code_count":items.count(),
-            "used":items.filter(used=True),
+            "used":items.filter(used=True).count(),
+            "items":items.order_by("code"),
             }
         )
     elif Pharmacies.objects.filter(user=user) or Chemists.objects.filter(user=user):
-        items = Items.objects.filter(box__receiver=user, is_box=True)
+        items = Items.objects.filter(box__receiver=user, is_box=True).order_by("first_column")
         scanned = items.filter(box__received=True)
         unscanned = items.filter(box__received=False)
         return render(request, "table.html", {
             "code_count":items.count(),
             #"used":items,
             "unscanned_items":unscanned,
-            "items":scanned,
+            "items":scanned.order_by("code"),
             }
         )
         
@@ -163,12 +166,14 @@ def download_codes(request):
             medicines = Medicines.objects.all()
             importers = Importers.objects.all()
             targets = Pharmacies.objects.all()
+            items = Items.objects.all()
             return render(request, "download_codes.html", {
                 "medicines":medicines,
                 "importers":importers,
                 "targets":targets,
                 "medicine_count":Medicines.objects.all().count(),
-                "code_count":Items.objects.all().count(),
+                "code_count":items.count(),
+                "available_codes":items.filter(downloaded=False).count(),
                 "importers_count":importers.count()
 
             })
@@ -396,6 +401,7 @@ def issue_codes(request):
                 "pharmacies_count":Pharmacies.objects.all().count(),
                 "chemists_count":Chemists.objects.all().count(),
                 "pbb_approved":Items.objects.filter(is_active=True).count(),
+                "available_codes":Items.objects.filter(downloaded=True, is_issued=False).count(),
 
             })
         elif request.method == "POST":
@@ -439,16 +445,21 @@ def issue_codes(request):
         if check_importer:
             medicines = Medicines.objects.filter(importer=check_importer[0])
             items = Items.objects.filter(importer=check_importer[0])
+            not_used = items.filter(used=False).order_by("first_column")
+            used = items.filter(used=True).order_by("first_column")
+
         elif check_distributor:
             medicines = Medicines.objects.filter(manufacturer=check_menufacturer[0])
             items = Items.objects.filter(manufacturer=check_manufacturer[0])
+            not_used = items.filter(used=False).order_by("first_column")
+            used = items.filter(used=True).order_by("first_column")
         else:
             return HttpResponseRedirect("/")
         if request.method == "GET":
             return render(request, "user_issue_codes.html", {
                 "medicines":medicines,
                 "code_count":items.count(),
-                "used":items.filter(used=True),
+                "used":used.count(),
             })
         elif request.method == "POST":
             medicine_id = request.POST.get("medicine")
@@ -459,10 +470,13 @@ def issue_codes(request):
             medicine = Medicines.objects.get(id=medicine_id)
             code_count = items.count()
             counter = 0
+            not_used = list(not_used)
+            box_array = []
             for i in range(1, box+1):
-                item = items[counter]
+                item = not_used[counter]
                 box_obj = Boxes.objects.create(medicine=medicine, code=item.code, quantity=packet)
                 box_obj.save()
+                box_array.append(box_obj)
                 item.medicine = medicine
                 if check_importer:
                     item.importer = check_importer[0]
@@ -472,9 +486,12 @@ def issue_codes(request):
                 item.box = box_obj
                 item.used = True
                 item.save()
+                print("BOX "+str(item.code))
+                print(counter)
                 counter += 1
                 for j in range(1, packet+1):
-                    item = items[counter]
+                    print(counter)
+                    item = not_used[counter]
                     item.medicine = medicine
                     if check_importer:
                         item.importer = check_importer[0]
@@ -483,7 +500,15 @@ def issue_codes(request):
                     item.box = box_obj
                     item.used = True
                     item.save()
+                    print("Packet "+str(item.code))
                     counter+=1
+            
+            return render(request, "user_issue_codes.html", {
+                "medicines":medicines,
+                "code_count":items.count(),
+                "used":used.count(),
+                "box_codes":box_array,
+            })
                 
                 
 
