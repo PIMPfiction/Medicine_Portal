@@ -84,25 +84,26 @@
 #             item = Items.objects.get(code=current_code)
 #             if item.is_box:
 #                 box = item.box
+                
 #                 if box.target.user == self.request.user:
 #                     box.received = True
 #                     box.save()
 #             return queryset
 #         else:
 #             return queryset
-#         # order_by = self.request.query_params.get('order_by', '')
-#         # if order_by:
-#         #     order_by_name = order_by.split(' ')[1]
-#         #     order_by_sign = order_by.split(' ')[0]
-#         #     order_by_sign = '' if order_by_sign == 'asc' else '-'
-#         #     queryset = queryset.order_by(order_by_sign + order_by_name)
-#         # populer = self.request.query_params.get('populer', '')
-#         # if populer:
-#         #     queryset = queryset.order_by("-ziyaret_sayisi")[:3]
-#         # soneklenen = self.request.query_params.get("soneklenen", "")
-#         # if soneklenen:
-#         #     queryset = queryset.order_by("-id")[:3]
+        # order_by = self.request.query_params.get('order_by', '')
+        # if order_by:
+        #     order_by_name = order_by.split(' ')[1]
+        #     order_by_sign = order_by.split(' ')[0]
+        #     order_by_sign = '' if order_by_sign == 'asc' else '-'
+        #     queryset = queryset.order_by(order_by_sign + order_by_name)
+        # populer = self.request.query_params.get('populer', '')
+        # if populer:
+        #     queryset = queryset.order_by("-ziyaret_sayisi")[:3]
+        # soneklenen = self.request.query_params.get("soneklenen", "")
+        # if soneklenen:
+        #     queryset = queryset.order_by("-id")[:3]
 
         
-#         # return queryset
+        # return queryset
 

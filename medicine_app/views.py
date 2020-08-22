@@ -55,7 +55,8 @@ def index(request):
             "unscanned_items":unscanned_items,
             "medicine_count":Medicines.objects.all().count(),
             "code_count":Items.objects.all().count(),
-            "importers_count":Importers.objects.all().count()
+            "importers_count":Importers.objects.all().count(),
+            "downloaded_code":Items.objects.filter(downloaded=True).count(),
             }
         )
     elif PBB.objects.filter(user=user):
@@ -367,7 +368,7 @@ def dashboard(request):
             "importers":Importers.objects.all().count(),
             "distributors":Distributors.objects.all().count(),
             "pharmacies":Pharmacies.objects.all().count(),
-            "chemistis":Chemists.objects.all().count(),
+            "chemists":Chemists.objects.all().count(),
             "generated":generated,
             "downloaded_items": downloaded,
             "medicine_count":Medicines.objects.all().count(),

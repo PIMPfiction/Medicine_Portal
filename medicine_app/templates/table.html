@@ -19,9 +19,10 @@
         <thead>
           <tr>
             <th>Drug Name</th>
+            <th>Box Code</th>
             <th>Quantity</th>
-            <th>Importer/Distributor</th>
-            <th>Manufacturer Name</th>
+            <th>Importer/Manufacturer</th>
+            <th>Distributor Name</th>
             <th>QR Codes Scanned</th>
             {% if request.user.is_superuser %}
             <th>Generate/Download Codes</th>
@@ -34,13 +35,14 @@
         {% for item in unscanned_items %}
           <tr>
             <td><a href="/query/{{item.code}}">{{item.medicine.generic}}</a></td>
-            <td>{{item.box.get_items.count}}</td>
+            <td>{{item.box.code}}</td>
+            <td>{{item.box.quantity}}</td>
             {% if item.importer %}
-                <td>{{ item.box.importer.name}}</td>
+                <td>{{ item.importer.name}}</td>
             {% else %}
-                <td>{{ item.box.distributor.name}}</td>
+                <td>{{ item.manufacturer.name}}</td>
             {% endif %}
-            <td>{{item.medicine.manufacturer.name }}</td>
+            <td>{{item.medicine.distributor.name }}</td>
             {% if item.box.received %}
               <td><span class="badge badge-pill badge-success">Codes Scanned</span></td>
 
