@@ -55,20 +55,20 @@ from rest_framework.generics import *
 #     serializer_class = SubCategoriesSerializer
 
 
-# class MedicinesViewSet(ModelViewSet):
-#     permission_classes = (IsAuthenticated,)
-#     queryset = Medicines.objects.order_by('pk')
-#     serializer_class = MedicinesSerializer
+class MedicinesViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    queryset = Medicines.objects.order_by('pk')
+    serializer_class = MedicinesSerializer
 
 
-# # class BoxesViewSet(ModelViewSet):
-# #     permission_classes = (IsAuthenticated,)
-# #     queryset = Boxes.objects.order_by('pk')
-# #     serializer_class = BoxesSerializer
+class BoxesViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    queryset = Boxes.objects.order_by('pk')
+    serializer_class = BoxesSerializer
 
 
 class ItemsViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     queryset = Items.objects.order_by('pk')
     serializer_class = ItemsSerializer
     # filterset_fields = ("medicine", "code", "box", "is_box")
@@ -89,6 +89,7 @@ class ItemsViewSet(ModelViewSet):
                 except:
                         receiver = None
                 if not receiver:
+                    return queryset
                 try:
                         receiver = Chemists.objects.get(user=self.request.user)
                 except:

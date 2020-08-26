@@ -1,12 +1,12 @@
-# from rest_framework.serializers import ModelSerializer
-# from medicine_app.models import *
-# from django.contrib.auth.models import User
+from rest_framework.serializers import ModelSerializer
+from medicine_app.models import *
+from django.contrib.auth.models import User
 
 
-# class UserSerializer(ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ("id", "is_superuser", "username", "first_name", "last_name", "email")
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "is_superuser", "username", "first_name", "last_name", "email")
 
 
 # class SuperAdminSerializer(ModelSerializer):
@@ -66,30 +66,30 @@
 #         fields = '__all__'
 
 
-# class MedicinesSerializer(ModelSerializer):
-#     brand = BrandsSerializer(read_only=True)
-#     category = SubCategoriesSerializer(read_only=True)
+class MedicinesSerializer(ModelSerializer):
+    # brand = BrandsSerializer(read_only=True)
+    # category = SubCategoriesSerializer(read_only=True)
 
-#     class Meta:
-#         model = Medicines
-#         fields = '__all__'
-
-
-# # class BoxesSerializer(ModelSerializer):
-# #     importer = Admin_BSerializer(read_only=True)
-
-# #     class Meta:
-# #         model = Boxes
-# #         fields = '__all__'
+    class Meta:
+        model = Medicines
+        fields = '__all__'
 
 
-# class ItemsSerializer(ModelSerializer):
-#     lookup_field = 'code'
-#     box = BoxesSerializer(read_only=True)
-#     owner = UserSerializer(read_only=True)
-#     medicine = MedicinesSerializer(read_only=True)
-#     class Meta:
-#         model = Items
-#         fields = '__all__'
+class BoxesSerializer(ModelSerializer):
+    # importer = Admin_BSerializer(read_only=True)
+
+    class Meta:
+        model = Boxes
+        fields = '__all__'
+
+
+class ItemsSerializer(ModelSerializer):
+    lookup_field = 'code'
+    box = BoxesSerializer(read_only=True)
+    owner = UserSerializer(read_only=True)
+    medicine = MedicinesSerializer(read_only=True)
+    class Meta:
+        model = Items
+        fields = '__all__'
 
     

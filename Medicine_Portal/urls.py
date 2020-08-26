@@ -26,6 +26,6 @@ urlpatterns = [
 
     path('kebs_admin/', admin.site.urls),
     path('', include('medicine_app.urls')),
-    # path('api/', include('medicine_app.api_urls')),
+    path('api/', include('medicine_app.api_urls')),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
