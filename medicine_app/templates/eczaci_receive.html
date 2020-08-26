@@ -1,0 +1,54 @@
+{% extends 'eczaci_base.html' %}
+
+
+
+{% block content %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+
+            </div>
+
+            <form method="POST" >
+              <!-- DataTales Example -->
+            <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">First Code of the Roll</span>
+                </div>
+                <input name="first" type="text" class="form-control" placeholder="Code Number" aria-label="Username" aria-describedby="basic-addon1">
+              </div>
+              
+            </div>
+            <div class="form-group mb-3">
+                <div class="form-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Last Code of the Roll</span>
+                </div>
+                <input name="last" type="text" class="form-control" placeholder="Code Number" aria-label="Username" aria-describedby="basic-addon1">
+              </div>
+              
+            </div>
+            <!-- /.container-fluid -->
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            
+          </form>
+
+          
+  
+        </div>
+        <!-- End of Main Content -->
+  
+
+{% endblock content %}m
+
+
+{% block script %}
+    {% if alert %}
+        <script>
+            alert("{{alert}}");
+        </script>
+    {% endif %}
+{% endblock %}

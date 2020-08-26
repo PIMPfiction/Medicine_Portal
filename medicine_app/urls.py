@@ -7,7 +7,7 @@ urlpatterns = [
     path('login/', views.user_login),
     path('logout', views.user_logout),
     path('query/<str:code>', views.code_info),
-    path('query/<str:code>/<str:id>', views.qrcode_setuser),
+    # path('query/<str:code>/<str:id>', views.qrcode_setuser),
     path('dashboard/', views.dashboard),
     path('generate_codes/', views.generate_codes),
     path('download_codes/', views.download_codes),

@@ -35,7 +35,8 @@ def user_login(request):
         else:
             return HttpResponseRedirect("/")
     else:
-        return render(request, "login.html", {})
+        logo = SystemLogo.objects.all()[0]
+        return render(request, "login.html", {"logo":logo})
 
 @login_required
 def user_logout(request):
@@ -80,6 +81,17 @@ def index(request):
             }
         )
     elif Pharmacies.objects.filter(user=user) or Chemists.objects.filter(user=user):
+        items = Items.objects.filter(box__receiver=user, is_box=True).order_by("first_column")
+        scanned = items.filter(box__received=True)
+        unscanned = items.filter(box__received=False)
+        return render(request, "table.html", {
+            "code_count":items.count(),
+            #"used":items,
+            "unscanned_items":unscanned,
+            "items":scanned.order_by("code"),
+            }
+        )
+    elif Chemists.objects.filter(user=user) or Chemists.objects.filter(user=user):
         items = Items.objects.filter(box__receiver=user, is_box=True).order_by("first_column")
         scanned = items.filter(box__received=True)
         unscanned = items.filter(box__received=False)
@@ -158,7 +170,7 @@ def generate_codes(request):
                 #     item.save()
                 return HttpResponseRedirect("/")
 
-
+@login_required
 def download_codes(request):
     user = request.user
     if request.user.is_superuser:
@@ -246,20 +258,20 @@ def code_info(request, code):
     return render(request, "code_info.html", {"item":item})
 
 
-def qrcode_setuser(request, code, id):
-    user = User.objects.get(id=id)
-    item = Items.objects.get(code=code)
-    if item.is_box:
-        for packet in item.box.get_items():
-            packet.owner = user
-            packet.save()
-    else:
-        item.owner = user 
-        item.save()
+# def qrcode_setuser(request, code, id):
+#     user = User.objects.get(id=id)
+#     item = Items.objects.get(code=code)
+#     if item.is_box:
+#         for packet in item.box.get_items():
+#             packet.owner = user
+#             packet.save()
+#     else:
+#         item.owner = user 
+#         item.save()
 
-    return HttpResponse("Owners changed")
+#     return HttpResponse("Owners changed")
 
-
+@login_required
 def receive_codes(request):
     items = Items.objects.all()
     ##scanned_items = items.filter(box__received=True)
@@ -267,7 +279,19 @@ def receive_codes(request):
     generated = items.filter(downloaded=False).order_by("code")
     downloaded = items.filter(downloaded=True).order_by("code")
     if request.method == "GET":
-        return render(request, "pbb_receive.html",  {
+        try:
+            pharmacy = Pharmacies.objects.get(user=request.user)
+        except:
+            pharmacy = False
+        try:
+            chemist = Chemists.objects.get(user=request.user)
+        except:
+            chemist = False
+        if chemist or pharmacy:
+            page = "eczaci_receive.html"
+        else:
+            page = "pbb_receive.html"
+        return render(request, page,  {
                 ##"scanned_items":scanned_items,
                 ##"unscanned_items":unscanned_items,
                 "manufacturers":Manufacturers.objects.all().count(),
@@ -329,10 +353,24 @@ def receive_codes(request):
                     "alert":alert,
                     }
                 )
+            if item.box:
+                try:
+                    pharmacy = Pharmacies.objects.get(user=request.user)
+                except:
+                    pharmacy = False
+                try:
+                    chemist = Chemists.objects.get(user=request.user)
+                except:
+                    chemist = False
+                if chemist or pharmacy:
+                    box = item.box
+                    box.receiver = request.user
+                    box.received = True
+                    box.save()        
             item.is_active = True
             item.save()
         return HttpResponseRedirect("/receive_codes")
-
+@login_required
 def dashboard(request):
     if request.user.is_superuser:
         user = User.objects.get(username="root")
@@ -380,7 +418,7 @@ def dashboard(request):
         )
 
 
-
+@login_required
 def issue_codes(request):
     user = request.user
     check_pbb = PBB.objects.filter(user=user)
