@@ -16,11 +16,12 @@ for row in range(2, 193):
         if column == 0:
             value = int(value)
         if column == 1:
-            try:
-                importer = Admin_B.objects.get(name=value)
-            except:   
-                importer = Admin_B.objects.create(name=value)
-                importer.save()
+            importer = Importers.objects.all()[0]
+            # try:
+            #     importer = Importers.objects.get(name=value)
+            # except:   
+            #     importer = Importers.objects.create(name=value)
+            #     importer.save()
         array.append(value)
     medicine = Medicines.objects.create(
         item_no = array[0],

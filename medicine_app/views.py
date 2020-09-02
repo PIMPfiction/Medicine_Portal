@@ -48,16 +48,20 @@ def index(request):
     user = request.user
     if user.is_superuser:
         user = User.objects.get(username="root")
-        items = Items.objects.filter(is_box=True)
-        scanned_items = items.filter(box__received=True)
-        unscanned_items = items.filter(box__received=False)
+        # items = Items.objects.filter(is_box=True)
+        # scanned_items = items.filter(box__received=True)
+        # unscanned_items = items.filter(box__received=False)
+        items = Items.objects.all()
+        issued_count = items.filter(is_issued=True).count()
+        
         return render(request, "index.html", {
-            "scanned_items":scanned_items,
-            "unscanned_items":unscanned_items,
+            # "scanned_items":scanned_items,
+            # "unscanned_items":unscanned_items,
             "medicine_count":Medicines.objects.all().count(),
             "code_count":Items.objects.all().count(),
             "importers_count":Importers.objects.all().count(),
             "downloaded_code":Items.objects.filter(downloaded=True).count(),
+            "issued_count":issued_count,
             }
         )
     elif PBB.objects.filter(user=user):
@@ -123,12 +127,18 @@ def generate_codes(request):
             medicines = Medicines.objects.all()
             importers = Importers.objects.all()
             targets = Pharmacies.objects.all()
+            items = Items.objects.all()
+            generated = items.filter(downloaded=False).order_by("code")
+            downloaded = items.filter(downloaded=True).order_by("code")
             return render(request, "generate_codes.html", {
                 "medicines":medicines,
                 "importers":importers,
                 "targets":targets,
                 "medicine_count":Medicines.objects.all().count(),
-                "code_count":Items.objects.all().count(),
+                "code_count":items.count(),
+                "downloaded_code":downloaded.count(),
+                "importers_count":Importers.objects.all().count(),
+
 
             })
         elif request.method == "POST":
@@ -305,7 +315,8 @@ def receive_codes(request):
                 "downloaded_count":downloaded.count(),
                 "importers_count":Importers.objects.all().count(),
                 "downloaded_rate": str(int(items.count()) - int(downloaded.count())),
-                "pbb_approved":items.filter(is_active=True).count()
+                "pbb_approved":items.filter(is_active=True).count(),
+                "codes_available":items.filter(is_issued=False, downloaded=True).count(),
                 })
     elif request.method == "POST":
         first = request.POST.get("first")
@@ -389,7 +400,10 @@ def dashboard(request):
             "code_count":items.count(),
             "downloaded_count":downloaded.count(),
             "importers_count":Admin_B.objects.all().count(),
-            "downloaded_rate": str(int(items.count()) - int(downloaded.count()))
+            "downloaded_rate": str(int(items.count()) - int(downloaded.count())),
+
+
+
             }
         )
     elif PBB.objects.filter(user=request.user):
@@ -413,7 +427,9 @@ def dashboard(request):
             "code_count":items.count(),
             "downloaded_count":downloaded.count(),
             "importers_count":Importers.objects.all().count(),
-            "downloaded_rate": str(int(items.count()) - int(downloaded.count()))
+            "downloaded_rate": str(int(items.count()) - int(downloaded.count())),
+            "codes_available":items.filter(is_issued=False, downloaded=True).count(),
+            "issued_count":items.filter(is_issued=True).count(),
             }
         )
 
