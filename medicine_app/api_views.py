@@ -118,3 +118,19 @@ class ItemsViewSet(ModelViewSet):
         
         return queryset
 
+class ImportersViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    queryset = Importers.objects.order_by('pk')
+    serializer_class = ImportersSerializer
+
+
+class ManufacturersViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    queryset = Manufacturers.objects.order_by('pk')
+    serializer_class = ManufacturersSerializer
+
+
+class DistributorsViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    queryset = Distributors.objects.order_by('pk')
+    serializer_class = DistributorsSerializer

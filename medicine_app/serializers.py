@@ -83,8 +83,30 @@ class BoxesSerializer(ModelSerializer):
         fields = '__all__'
 
 
+
+
+class ImportersSerializer(ModelSerializer):
+    class Meta:
+        model = Importers
+        fields = '__all__'
+
+    
+class ManufacturersSerializer(ModelSerializer):
+    class Meta:
+        model = Manufacturers
+        fields = '__all__'
+
+class DistributorsSerializer(ModelSerializer):
+    class Meta:
+        model = Distributors
+        fields = '__all__'
+
+
 class ItemsSerializer(ModelSerializer):
     lookup_field = 'code'
+    importer = ImportersSerializer(read_only=True)
+    manufacturer = ManufacturersSerializer(read_only=True)
+    distributor = DistributorsSerializer(read_only=True)
     box = BoxesSerializer(read_only=True)
     owner = UserSerializer(read_only=True)
     medicine = MedicinesSerializer(read_only=True)
@@ -92,4 +114,3 @@ class ItemsSerializer(ModelSerializer):
         model = Items
         fields = '__all__'
 
-    

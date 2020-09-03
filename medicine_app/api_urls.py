@@ -17,4 +17,10 @@ router.register(r'medicines', views.MedicinesViewSet)
 router.register(r'boxes', views.BoxesViewSet)
 router.register(r'items', views.ItemsViewSet)
 
+router.register(r'importers', views.ImportersViewSet)
+router.register(r'manufacturers', views.ManufacturersViewSet)
+router.register(r'distributors', views.DistributorsViewSet)
+
+
+
 urlpatterns = router.urls
